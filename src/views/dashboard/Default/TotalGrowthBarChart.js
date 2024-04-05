@@ -1,42 +1,42 @@
-import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import PropTypes from "prop-types";
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 
 // material-ui
-import { useTheme } from '@mui/material/styles';
-import { Grid, MenuItem, TextField, Typography } from '@mui/material';
+import { useTheme } from "@mui/material/styles";
+import { Grid, MenuItem, TextField, Typography } from "@mui/material";
 
 // third-party
-import ApexCharts from 'apexcharts';
-import Chart from 'react-apexcharts';
+import ApexCharts from "apexcharts";
+import Chart from "react-apexcharts";
 
 // project imports
-import SkeletonTotalGrowthBarChart from 'ui-component/cards/Skeleton/TotalGrowthBarChart';
-import MainCard from 'ui-component/cards/MainCard';
-import { gridSpacing } from 'store/constant';
+import SkeletonTotalGrowthBarChart from "ui-component/cards/Skeleton/TotalGrowthBarChart";
+import MainCard from "ui-component/cards/MainCard";
+import { gridSpacing } from "store/constant";
 
 // chart data
-import chartData from './chart-data/total-growth-bar-chart';
+import chartData from "./chart-data/total-growth-bar-chart";
 
 const status = [
   {
-    value: 'today',
-    label: 'Today'
+    value: "today",
+    label: "Today",
   },
   {
-    value: 'month',
-    label: 'This Month'
+    value: "month",
+    label: "This Month",
   },
   {
-    value: 'year',
-    label: 'This Year'
-  }
+    value: "year",
+    label: "This Year",
+  },
 ];
 
 // ==============================|| DASHBOARD DEFAULT - TOTAL GROWTH BAR CHART ||============================== //
 
 const TotalGrowthBarChart = ({ isLoading }) => {
-  const [value, setValue] = useState('today');
+  const [value, setValue] = useState("today");
   const theme = useTheme();
   const customization = useSelector((state) => state.customization);
 
@@ -58,35 +58,59 @@ const TotalGrowthBarChart = ({ isLoading }) => {
       xaxis: {
         labels: {
           style: {
-            colors: [primary, primary, primary, primary, primary, primary, primary, primary, primary, primary, primary, primary]
-          }
-        }
+            colors: [
+              primary,
+              primary,
+              primary,
+              primary,
+              primary,
+              primary,
+              primary,
+              primary,
+              primary,
+              primary,
+              primary,
+              primary,
+            ],
+          },
+        },
       },
       yaxis: {
         labels: {
           style: {
-            colors: [primary]
-          }
-        }
+            colors: [primary],
+          },
+        },
       },
       grid: {
-        borderColor: grey200
+        borderColor: grey200,
       },
       tooltip: {
-        theme: 'light'
+        theme: "light",
       },
       legend: {
         labels: {
-          colors: grey500
-        }
-      }
+          colors: grey500,
+        },
+      },
     };
 
     // do not load chart when loading
     if (!isLoading) {
-      ApexCharts.exec(`bar-chart`, 'updateOptions', newChartData);
+      ApexCharts.exec(`bar-chart`, "updateOptions", newChartData);
     }
-  }, [navType, primary200, primaryDark, secondaryMain, secondaryLight, primary, darkLight, grey200, isLoading, grey500]);
+  }, [
+    navType,
+    primary200,
+    primaryDark,
+    secondaryMain,
+    secondaryLight,
+    primary,
+    darkLight,
+    grey200,
+    isLoading,
+    grey500,
+  ]);
 
   return (
     <>
@@ -96,19 +120,30 @@ const TotalGrowthBarChart = ({ isLoading }) => {
         <MainCard>
           <Grid container spacing={gridSpacing}>
             <Grid item xs={12}>
-              <Grid container alignItems="center" justifyContent="space-between">
+              <Grid
+                container
+                alignItems="center"
+                justifyContent="space-between"
+              >
                 <Grid item>
                   <Grid container direction="column" spacing={1}>
                     <Grid item>
-                      <Typography variant="subtitle2">Total Growth</Typography>
+                      <Typography variant="subtitle2">
+                        Total Attendance
+                      </Typography>
                     </Grid>
                     <Grid item>
-                      <Typography variant="h3">$2,324.00</Typography>
+                      <Typography variant="h3">362</Typography>
                     </Grid>
                   </Grid>
                 </Grid>
                 <Grid item>
-                  <TextField id="standard-select-currency" select value={value} onChange={(e) => setValue(e.target.value)}>
+                  <TextField
+                    id="standard-select-currency"
+                    select
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                  >
                     {status.map((option) => (
                       <MenuItem key={option.value} value={option.value}>
                         {option.label}
@@ -129,7 +164,7 @@ const TotalGrowthBarChart = ({ isLoading }) => {
 };
 
 TotalGrowthBarChart.propTypes = {
-  isLoading: PropTypes.bool
+  isLoading: PropTypes.bool,
 };
 
 export default TotalGrowthBarChart;
