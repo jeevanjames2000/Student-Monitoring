@@ -32,6 +32,7 @@ const QrCode = () => {
     year: "",
     branch: "",
   });
+  console.log("formData: ", formData);
 
   const handleAdd = () => {
     setFormData({
@@ -150,9 +151,9 @@ const QrCode = () => {
               fullWidth
               label="Designation"
               name="designation"
-              value={designation}
+              value={formData.designation}
               required
-              onChange={(e) => setDesignation(e.target.value)}
+              onChange={handleInputChange}
               margin="normal"
             />
           )}
