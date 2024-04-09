@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 // material-ui
 import { useTheme } from "@mui/material/styles";
@@ -10,14 +10,17 @@ import AuthCardWrapper from "../AuthCardWrapper";
 import AuthLogin from "../auth-forms/AuthLogin";
 import Logo from "ui-component/Logo";
 import AuthFooter from "ui-component/cards/AuthFooter";
+import { MyContext } from "store/useContext";
 
 // assets
 
 // ================================|| AUTH3 - LOGIN ||================================ //
 
-const Login = ({ navigateToRegister }) => {
+const Login = () => {
   const theme = useTheme();
   const matchDownSM = useMediaQuery(theme.breakpoints.down("md"));
+  const navigate = useNavigate();
+  const { setLogin } = useContext(MyContext);
 
   // State to store login details
   const [loginDetails, setLoginDetails] = useState({
@@ -26,13 +29,8 @@ const Login = ({ navigateToRegister }) => {
   });
   console.log("loginDetails: ", loginDetails);
 
-  // Function to handle changes in login details
-  const handleLoginDetailsChange = (e) => {
-    const { name, value } = e.target;
-    setLoginDetails({
-      ...loginDetails,
-      [name]: value,
-    });
+  const handleRoute = () => {
+    navigate("/pages/Register/Register3");
   };
 
   return (
@@ -96,10 +94,7 @@ const Login = ({ navigateToRegister }) => {
                   </Grid>
                   <Grid item xs={12}>
                     {/* Pass the state and onChange handler to AuthLogin */}
-                    <AuthLogin
-                      loginDetails={loginDetails}
-                      handleLoginDetailsChange={handleLoginDetailsChange}
-                    />
+                    <AuthLogin />
                   </Grid>
                   <Grid item xs={12}>
                     <Divider />
@@ -113,10 +108,13 @@ const Login = ({ navigateToRegister }) => {
                       xs={12}
                     >
                       <Typography
-                        component="span"
+                        // component="span"
                         variant="subtitle1"
                         sx={{ textDecoration: "none", cursor: "pointer" }}
-                        onClick={navigateToRegister} // Call navigateToRegister function
+                        onClick={() => {
+                          setLogin(true);
+                          navigate("/pages/Register/Register3");
+                        }}
                       >
                         Don&apos;t have an account?
                       </Typography>

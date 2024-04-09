@@ -33,6 +33,7 @@ import AnimateButton from "ui-component/extended/AnimateButton";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { MyContext } from "store/useContext";
+import { useNavigate } from "react-router-dom";
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 
@@ -41,11 +42,10 @@ const FirebaseLogin = ({ ...others }) => {
   const scriptedRef = useScriptRef();
 
   const [checked, setChecked] = useState(true);
-  const [uname, setUname] = useState([]);
+  const navigate = useNavigate();
 
-  const [password, setPassword] = useState([]);
-
-  const { setLogin } = useContext(MyContext);
+  const { login, setLogin } = useContext(MyContext);
+  console.log("login: ", login);
 
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => {
@@ -56,28 +56,58 @@ const FirebaseLogin = ({ ...others }) => {
     event.preventDefault();
   };
 
+  const [loginData, setLoginData] = useState({
+    userName: "",
+    password: "",
+  });
+  console.log("loginData: ", loginData);
+
+  const handleLoginSubmit = async (loginData) => {
+    // e.preventDefault();
+    try {
+      const response = await fetch("http://localhost:3000/api/students/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(loginData),
+      });
+
+      const data = await response.json();
+      if (response.status === 200) {
+        localStorage.setItem("login", true);
+        navigate("/dashboard/default");
+        setLogin(true);
+      }
+      console.log(data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
   return (
     <>
       <Formik
         initialValues={{
-          email: "info@gmail.com",
-          password: "123456",
-          submit: null,
+          email: "jeevanjames",
+          password: "password123",
+          // submit: null,
         }}
         validationSchema={Yup.object().shape({
           email: Yup.string()
-            .email("Must be a valid email")
+            // .email("Must be a valid email")
             .max(255)
             .required("Email is required"),
           password: Yup.string().max(255).required("Password is required"),
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
-            setUname(values.email);
-            setLogin(true);
-            localStorage.setItem('login',true)
-            setPassword(values.password);
-            console.log("Login Details:", values);
+            setLoginData({
+              ...loginData,
+              userName: values.email,
+              password: values.password,
+            });
+
+            handleLoginSubmit(loginData);
             if (scriptedRef.current) {
               setStatus({ success: true });
               setSubmitting(false);

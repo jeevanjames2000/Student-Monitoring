@@ -64,14 +64,12 @@ const ProfileSection = () => {
    * */
   const anchorRef = useRef(null);
   const handleLogout = async () => {
-    setLogin(false);
-    localStorage.removeItem("login");
+    navigate("/pages/Login/Login3");
 
+    localStorage.removeItem("login");
     console.log("Logout");
   };
-  useEffect(() => {
-    setLogin(false);
-  }, [login]);
+
   const handleClose = (event) => {
     if (anchorRef.current && anchorRef.current.contains(event.target)) {
       return;
