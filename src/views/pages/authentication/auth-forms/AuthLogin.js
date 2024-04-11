@@ -16,10 +16,12 @@ import {
   InputAdornment,
   InputLabel,
   OutlinedInput,
+  Select,
   Stack,
   Typography,
   useMediaQuery,
 } from "@mui/material";
+import MenuItem from "@mui/material/MenuItem";
 
 // third party
 import * as Yup from "yup";
@@ -56,15 +58,15 @@ const FirebaseLogin = ({ ...others }) => {
     event.preventDefault();
   };
 
-  const [loginData, setLoginData] = useState({
-    userName: "",
-    password: "",
-  });
-  console.log("loginData: ", loginData);
-
   const handleLoginSubmit = async (data) => {
     try {
-      const response = await fetch("http://localhost:3000/api/students/login", {
+      let ApiUrl = "";
+      if (user.student) {
+        ApiUrl = "http://localhost:3000/api/students/login";
+      } else if (user.faculty) {
+        ApiUrl = "http://localhost:3000/api/faculty/login";
+      }
+      const response = await fetch(ApiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -77,11 +79,25 @@ const FirebaseLogin = ({ ...others }) => {
         localStorage.setItem("login", true);
         navigate("/dashboard/default");
         setLogin(true);
+        localStorage.setItem("user", JSON.stringify(responseData.type));
       }
       console.log(responseData);
     } catch (error) {
       console.error("Error:", error);
     }
+  };
+
+  const [user, setUser] = useState({ student: false, faculty: false });
+
+  const [select, setSelect] = useState("");
+  const handleDropChange = (event) => {
+    const selectedUserType = event.target.value;
+    setSelect(selectedUserType);
+
+    setUser({
+      student: selectedUserType === "student",
+      faculty: selectedUserType === "faculty",
+    });
   };
 
   return (
@@ -90,11 +106,12 @@ const FirebaseLogin = ({ ...others }) => {
         initialValues={{
           email: "jeevanjames",
           password: "password123",
+          user: "",
           // submit: null,
         }}
         validationSchema={Yup.object().shape({
           email: Yup.string()
-            // .email("Must be a valid email")
+
             .max(255)
             .required("Email is required"),
           password: Yup.string().max(255).required("Password is required"),
@@ -132,6 +149,27 @@ const FirebaseLogin = ({ ...others }) => {
           values,
         }) => (
           <form noValidate onSubmit={handleSubmit} {...others}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">User Type</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={select}
+                name="user"
+                required
+                label="User Type"
+                onChange={handleDropChange}
+                onBlur={handleBlur}
+              >
+                <MenuItem value={"student"}>Student</MenuItem>
+                <MenuItem value={"faculty"}>Faculty</MenuItem>
+              </Select>
+              {touched.user &&
+                errors.user && ( // changed from `touched.select` to `touched.user`
+                  <FormHelperText error>{errors.user}</FormHelperText> // changed from `errors.select` to `errors.user`
+                )}
+            </FormControl>
+
             <FormControl
               fullWidth
               error={Boolean(touched.email && errors.email)}

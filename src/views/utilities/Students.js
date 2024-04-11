@@ -222,28 +222,48 @@ const Students = () => {
   }, []);
 
   const handleEdit = (student) => {
-    setModalTitle("Edit Student");
-    setFormData(student);
-    setOpenModal(true);
-    handleMenuClose();
+    const data = localStorage.getItem("user");
+    if (data === "true") {
+      setModalTitle("Edit Student");
+      setFormData(student);
+      setOpenModal(true);
+      handleMenuClose();
+    } else {
+      alert("Required Access To modify");
+    }
   };
 
   const handleDelete = (id) => {
-    setStudents(students.filter((student) => student.id !== id));
+    const data = localStorage.getItem("user");
+    if (data === "true") {
+      setStudents(students.filter((student) => student.id !== id));
+    } else {
+      alert("Required Access To modify");
+    }
   };
 
   const handleUpdate = () => {
-    const updatedStudents = students.map((student) =>
-      student.id === formData.id ? formData : student
-    );
-    setStudents(updatedStudents);
-    handleCloseModal();
+    const data = localStorage.getItem("user");
+    if (data === "true") {
+      const updatedStudents = students.map((student) =>
+        student.id === formData.id ? formData : student
+      );
+      setStudents(updatedStudents);
+      handleCloseModal();
+    } else {
+      alert("Required Access To modify");
+    }
   };
 
   const handleAdd = () => {
-    setModalTitle("Add Student");
-    setFormData(initialStudentData);
-    setOpenModal(true);
+    const data = localStorage.getItem("user");
+    if (data === "true") {
+      setModalTitle("Add Student");
+      setFormData(initialStudentData);
+      setOpenModal(true);
+    } else {
+      alert("Required Access To modify");
+    }
   };
 
   const handleMenuOpen = (event) => {
@@ -323,7 +343,7 @@ const Students = () => {
                     <TableRow key={student.id}>
                       <TableCell>{index}</TableCell>
                       <TableCell>{student.name}</TableCell>
-                      <TableCell>{student.rollNum}</TableCell>
+                      <TableCell>{student.rollNumber}</TableCell>
                       <TableCell>{student.branch}</TableCell>
                       <TableCell>{student.year}</TableCell>
                       <TableCell align="center">
@@ -352,6 +372,7 @@ const Students = () => {
                           <MenuItem onClick={() => handleEdit(student)}>
                             Edit
                           </MenuItem>
+
                           <MenuItem onClick={() => handleDelete(student.id)}>
                             Delete
                           </MenuItem>

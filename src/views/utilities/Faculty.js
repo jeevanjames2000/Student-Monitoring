@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Grid,
   Table,
@@ -14,7 +14,12 @@ import {
   Button,
   Modal,
   TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
   Box,
+  TablePagination,
   FormControl,
   InputLabel,
 } from "@mui/material";
@@ -22,171 +27,66 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import MainCard from "ui-component/cards/MainCard";
 
 import { Select } from "@mui/material";
+// Dummy student data
 const initialStudentData = {
   id: "",
   name: "",
-  facultyId: "",
+  rollNumber: "",
   branch: "",
-  designation: "",
+  section: "",
+  year: "",
   entrytime: "",
   exittime: "",
 };
 
-// Add more students as needed
 const Faculty = () => {
-  const studentsData = [
-    {
-      id: 1,
-      name: "John Doe",
-      facultyId: "87287",
-      branch: "CSE",
-      designation: "Hod",
-      entrytime: "8.30",
-      exittime: "5.30",
-    },
-    {
-      id: 2,
-      name: "Jane Doe",
-      facultyId: "87887",
-      branch: "MECH",
-      designation: "Asst Professor",
-      entrytime: "8.45",
-      exittime: "5.30",
-    },
-    {
-      id: 3,
-      name: "Alice Smith",
-      facultyId: "88432",
-      branch: "ECE",
-      designation: "Professor",
-      entrytime: "9.00",
-      exittime: "6.00",
-    },
-    {
-      id: 4,
-      name: "Bob Johnson",
-      facultyId: "89001",
-      branch: "CIVIL",
-      designation: "Lecturer",
-      entrytime: "9.15",
-      exittime: "5.45",
-    },
-    {
-      id: 5,
-      name: "Emily Wilson",
-      facultyId: "89650",
-      branch: "MECH",
-      designation: "Dean",
-      entrytime: "8.30",
-      exittime: "5.30",
-    },
-    {
-      id: 6,
-      name: "Michael Brown",
-      facultyId: "90234",
-      branch: "CSE",
-      designation: "Asst Professor",
-      entrytime: "9.30",
-      exittime: "6.00",
-    },
-    {
-      id: 7,
-      name: "Emma Davis",
-      facultyId: "90876",
-      branch: "ECE",
-      designation: "Hod",
-      entrytime: "8.45",
-      exittime: "5.45",
-    },
-    {
-      id: 8,
-      name: "Daniel Miller",
-      facultyId: "91456",
-      branch: "CIVIL",
-      designation: "Professor",
-      entrytime: "9.00",
-      exittime: "6.00",
-    },
-    {
-      id: 9,
-      name: "Sophia Jones",
-      facultyId: "92009",
-      branch: "MECH",
-      designation: "Asst Professor",
-      entrytime: "8.30",
-      exittime: "5.30",
-    },
-    {
-      id: 10,
-      name: "Liam Taylor",
-      facultyId: "92670",
-      branch: "CSE",
-      designation: "Lecturer",
-      entrytime: "9.15",
-      exittime: "5.45",
-    },
-    {
-      id: 11,
-      name: "Olivia Anderson",
-      facultyId: "93248",
-      branch: "ECE",
-      designation: "Dean",
-      entrytime: "8.30",
-      exittime: "5.30",
-    },
-    {
-      id: 12,
-      name: "Lucas Wilson",
-      facultyId: "93850",
-      branch: "CIVIL",
-      designation: "Asst Professor",
-      entrytime: "9.00",
-      exittime: "6.00",
-    },
-    {
-      id: 13,
-      name: "Ava Johnson",
-      facultyId: "94421",
-      branch: "MECH",
-      designation: "Professor",
-      entrytime: "9.30",
-      exittime: "6.00",
-    },
-    {
-      id: 14,
-      name: "Mia Smith",
-      facultyId: "95003",
-      branch: "CSE",
-      designation: "Lecturer",
-      entrytime: "8.45",
-      exittime: "5.45",
-    },
-    {
-      id: 15,
-      name: "Ethan Davis",
-      facultyId: "95678",
-      branch: "ECE",
-      designation: "Asst Professor",
-      entrytime: "9.00",
-      exittime: "5.30",
-    },
-  ];
-
-  const [students, setStudents] = useState(studentsData);
+  const [students, setStudents] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [formData, setFormData] = useState(initialStudentData);
+  const [student, setStudent] = useState([]);
+  console.log("student: ", students);
+  const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/api/faculty/getAllFaculty")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setStudents(data);
+      })
+      .catch((error) => {
+        console.error("There was a problem with the fetch operation:", error);
+        setError(error);
+      });
+  }, []);
 
   const handleEdit = (student) => {
-    setModalTitle("Edit Faculty");
-    setFormData(student);
-    setOpenModal(true);
-    handleMenuClose();
+    const data = localStorage.getItem("user");
+    if (data === "true") {
+      setModalTitle("Edit Faculty");
+      setFormData(student);
+      setOpenModal(true);
+      handleMenuClose();
+    } else {
+      alert("Required Access To modify");
+    }
   };
 
   const handleDelete = (id) => {
-    setStudents(students.filter((student) => student.id !== id));
+    const data = localStorage.getItem("user");
+    if (data === "true") {
+      setStudents(students.filter((student) => student.id !== id));
+    } else {
+      alert("Required Access To Delete");
+    }
   };
 
   const handleUpdate = () => {
@@ -198,9 +98,14 @@ const Faculty = () => {
   };
 
   const handleAdd = () => {
-    setModalTitle("Add Faculty");
-    setFormData(initialStudentData);
-    setOpenModal(true);
+    const data = localStorage.getItem("user");
+    if (data === "true") {
+      setModalTitle("Add Faculty");
+      setFormData(initialStudentData);
+      setOpenModal(true);
+    } else {
+      alert("Required Access To Delete");
+    }
   };
 
   const handleMenuOpen = (event) => {
@@ -222,12 +127,34 @@ const Faculty = () => {
       [name]: value,
     });
   };
+
+  const [open, setOpen] = useState(false);
+  const [qrCodeData, setQrCodeData] = useState("");
+
+  const handleOpen = (data) => {
+    setQrCodeData(data);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setCurrentPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setCurrentPage(0);
+  };
+
   return (
     <MainCard
       title="Faculty"
       secondary={
         <Button variant="outlined" onClick={handleAdd}>
-          Add Faculty
+          Add Student
         </Button>
       }
     >
@@ -237,59 +164,98 @@ const Faculty = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>ID</TableCell>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Faculty Id</TableCell>
+                  <TableCell>Sl No</TableCell>
+                  <TableCell>Faculty Name</TableCell>
+                  <TableCell>Emplyoee Id</TableCell>
                   <TableCell>Branch</TableCell>
                   <TableCell>Designation</TableCell>
+                  <TableCell align="center">QR-Code</TableCell>
                   <TableCell>Entry Time</TableCell>
                   <TableCell>Exit Time</TableCell>
                   <TableCell>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {students.map((student) => (
-                  <TableRow key={student.id}>
-                    <TableCell>{student.id}</TableCell>
-                    <TableCell>{student.name}</TableCell>
-                    <TableCell>{student.facultyId}</TableCell>
-                    <TableCell>{student.branch}</TableCell>
-
-                    <TableCell>{student.designation}</TableCell>
-
-                    <TableCell>{student.entrytime}</TableCell>
-                    <TableCell>{student.exittime}</TableCell>
-                    <TableCell>
-                      <IconButton
-                        aria-label="more"
-                        aria-controls="student-menu"
-                        aria-haspopup="true"
-                        onClick={handleMenuOpen}
-                      >
-                        <MoreVertIcon />
-                      </IconButton>
-                      <Menu
-                        id="student-menu"
-                        anchorEl={anchorEl}
-                        keepMounted
-                        open={Boolean(anchorEl)}
-                        onClose={handleMenuClose}
-                      >
-                        <MenuItem onClick={() => handleEdit(student)}>
-                          Edit
-                        </MenuItem>
-                        <MenuItem onClick={() => handleDelete(student.id)}>
-                          Delete
-                        </MenuItem>
-                      </Menu>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {students
+                  .slice(
+                    currentPage * rowsPerPage,
+                    currentPage * rowsPerPage + rowsPerPage
+                  )
+                  .map((student, index) => (
+                    <TableRow key={student.id}>
+                      <TableCell>{index}</TableCell>
+                      <TableCell>{student.name}</TableCell>
+                      <TableCell>{student.emplyoeeId}</TableCell>
+                      <TableCell>{student.branch}</TableCell>
+                      <TableCell>{student.designation}</TableCell>
+                      <TableCell align="center">
+                        <Button onClick={() => handleOpen(student.qrCode)}>
+                          Show Qr Code
+                        </Button>
+                      </TableCell>
+                      <TableCell>{student.entrytime}</TableCell>
+                      <TableCell>{student.exittime}</TableCell>
+                      <TableCell>
+                        <IconButton
+                          aria-label="more"
+                          aria-controls="student-menu"
+                          aria-haspopup="true"
+                          onClick={handleMenuOpen}
+                        >
+                          <MoreVertIcon />
+                        </IconButton>
+                        <Menu
+                          id="student-menu"
+                          anchorEl={anchorEl}
+                          keepMounted
+                          open={Boolean(anchorEl)}
+                          onClose={handleMenuClose}
+                        >
+                          <MenuItem onClick={() => handleEdit(student)}>
+                            Edit
+                          </MenuItem>
+                          <MenuItem onClick={() => handleDelete(student.id)}>
+                            Delete
+                          </MenuItem>
+                        </Menu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
+
+            {/* Pagination */}
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={students.length}
+              rowsPerPage={rowsPerPage}
+              page={currentPage}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
           </TableContainer>
         </Grid>
       </Grid>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>QR Code</DialogTitle>
+        <DialogContent>
+          <img
+            src={qrCodeData}
+            alt="QR Code"
+            style={{
+              width: "100%",
+              maxHeight: "1000px",
+              objectFit: "contain",
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Modal
         open={openModal}
         onClose={handleCloseModal}
@@ -341,7 +307,7 @@ const Faculty = () => {
             fullWidth
             label="Roll Number"
             name="rollNumber"
-            value={formData.facultyId}
+            value={formData.rollNumber}
             onChange={handleInputChange}
             margin="normal"
           />
@@ -350,11 +316,18 @@ const Faculty = () => {
             fullWidth
             label="Year"
             name="year"
-            value={formData.designation}
+            value={formData.year}
             onChange={handleInputChange}
             margin="normal"
           />
-
+          <TextField
+            fullWidth
+            label="Section"
+            name="section"
+            value={formData.section}
+            onChange={handleInputChange}
+            margin="normal"
+          />
           <TextField
             fullWidth
             label="Entry Time"

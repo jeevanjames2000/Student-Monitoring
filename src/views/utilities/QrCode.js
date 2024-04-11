@@ -14,61 +14,82 @@ import {
 } from "@mui/material";
 import QRCodeReact from "qrcode.react";
 
-// Add more students as needed
 const QrCode = () => {
   const [students, setStudents] = useState([]);
+  const [qrCodeDataUri, setQrCodeDataUri] = useState("");
 
   const [openModal, setOpenModal] = useState(false);
 
   const [formData, setFormData] = useState({
-    id: "",
     name: "",
     rollNumber: "",
-    user: "",
-    entrytime: "",
-    facultyId: "",
-    exittime: "",
+    userType: "",
+    entryTime: "",
+    emplyoeeId: "",
+    exitTime: "",
     designation: "",
     year: "",
     branch: "",
   });
-  console.log("formData: ", formData);
+
+  const data = localStorage.getItem("user");
 
   const handleAdd = () => {
-    setFormData({
-      id: "",
-      name: "",
-      rollNumber: "",
-      facultyId: "",
-      entrytime: "",
-      year: "",
-      designation: "",
-      user: "",
-      exittime: "",
-      branch: "",
-    });
-    setOpenModal(true);
+    if (data === "true") {
+      setFormData({
+        name: "",
+        rollNumber: "",
+        emplyoeeId: "",
+        entryTime: "",
+        year: "",
+        designation: "",
+        userType: "",
+        exitTime: "",
+        branch: "",
+      });
+      setOpenModal(true);
+    } else {
+      alert("Required Access To Add");
+    }
   };
 
   const handleCloseModal = () => {
     setOpenModal(false);
   };
-  const [designation, setDesignation] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (name === "user" && value === "faculty") {
-      setDesignation("");
-    }
     setFormData({
       ...formData,
       [name]: value,
     });
   };
 
-  const handleSubmit = () => {
-    setStudents([...students, formData]);
-    handleCloseModal();
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3000/api/faculty/generateNewQr",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.status === 200) {
+        setQrCodeDataUri(data.qrCodeDataUri);
+        setStudents([...students, formData]);
+        handleCloseModal();
+      } else {
+        console.error("Failed to generate QR code:", data.message);
+      }
+    } catch (error) {
+      console.error("Error generating QR code:", error);
+    }
   };
 
   return (
@@ -94,15 +115,11 @@ const QrCode = () => {
                       Generate New QR-Code
                     </Button>
                   </Grid>
+
                   <Grid item xs={12}>
-                    <Grid item xs={12}>
-                      {students.length > 0 && (
-                        <QRCodeReact
-                          value={JSON.stringify(students)}
-                          size={456}
-                        />
-                      )}
-                    </Grid>
+                    {qrCodeDataUri && (
+                      <img src={qrCodeDataUri} alt="QR Code" width={456} />
+                    )}
                   </Grid>
                 </Grid>
               </Box>
@@ -110,7 +127,6 @@ const QrCode = () => {
           </Card>
         </Grid>
       </Grid>
-
       <Modal
         open={openModal}
         onClose={handleCloseModal}
@@ -134,10 +150,10 @@ const QrCode = () => {
         >
           <h2 id="student-modal-title">Generate QR</h2>
           <FormControl fullWidth margin="normal">
-            <InputLabel>User</InputLabel>
+            <InputLabel>User Type*</InputLabel>
             <Select
-              name="user"
-              value={formData.user}
+              name="userType"
+              value={formData.userType}
               onChange={handleInputChange}
               required
             >
@@ -146,7 +162,7 @@ const QrCode = () => {
             </Select>
           </FormControl>
 
-          {formData.user === "faculty" && (
+          {formData.userType === "faculty" && (
             <TextField
               fullWidth
               label="Designation"
@@ -159,36 +175,37 @@ const QrCode = () => {
           )}
           <TextField
             fullWidth
-            label="Name"
+            label="FullName"
             name="name"
             value={formData.name}
             onChange={handleInputChange}
             margin="normal"
             required
           />
-          {formData.user === "student" && (
+          {formData.userType === "student" && (
             <TextField
               fullWidth
               label="Roll Number"
               name="rollNumber"
+              type="number"
               value={formData.rollNumber}
               onChange={handleInputChange}
               required
               margin="normal"
             />
           )}
-          {formData.user === "faculty" && (
+          {formData.userType === "faculty" && (
             <TextField
               fullWidth
-              label="Faculty ID"
-              name="facultyId"
-              value={formData.facultyId}
+              label="Employee ID"
+              name="emplyoeeId"
+              value={formData.emplyoeeId}
               onChange={handleInputChange}
               required
               margin="normal"
             />
           )}
-          {formData.user === "student" && (
+          {formData.userType === "student" && (
             <TextField
               fullWidth
               label="Year"

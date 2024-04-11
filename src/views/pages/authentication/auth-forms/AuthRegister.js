@@ -36,7 +36,6 @@ import { strengthColor, strengthIndicator } from "utils/password-strength";
 // assets
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { MyContext } from "store/useContext";
 
 // ===========================|| FIREBASE - REGISTER ||=========================== //
 
@@ -73,12 +72,11 @@ const FirebaseRegister = ({ ...others }) => {
   useEffect(() => {
     changePassword("123456");
   }, []);
-  const { login, setLogin } = useContext(MyContext);
 
   const [loginData, setLoginData] = useState({
-    rollNum: "",
+    rollNumber: "",
     name: "",
-    employeeId: "",
+    emplyoeeId: "",
     year: "",
     branch: "",
     userName: "",
@@ -86,30 +84,6 @@ const FirebaseRegister = ({ ...others }) => {
   });
   console.log("loginData: ", loginData);
 
-  const handleRegisterSubmit = async (loginData) => {
-    // e.preventDefault();
-    try {
-      const response = await fetch(
-        "http://localhost:3000/api/students/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(loginData),
-        }
-      );
-
-      const data = await response.json();
-      if (response.status === 200) {
-        alert("success");
-        // setLogin(true);
-      }
-      console.log(data);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
   const [select, setSelect] = useState("");
   const handleDropChange = (event) => {
     const selectedUserType = event.target.value;
@@ -117,7 +91,7 @@ const FirebaseRegister = ({ ...others }) => {
 
     setUser({
       ...user,
-      [selectedUserType]: !user[selectedUserType], // toggle the value
+      [selectedUserType]: !user[selectedUserType],
     });
   };
 
@@ -126,10 +100,11 @@ const FirebaseRegister = ({ ...others }) => {
       <Formik
         initialValues={{
           fname: "",
-          rollNum: "",
-          employeeId: "",
+          rollNumber: "",
+          emplyoeeId: "",
           branch: "",
           email: "",
+          designation: "",
           password: "",
           submit: null,
         }}
@@ -143,9 +118,10 @@ const FirebaseRegister = ({ ...others }) => {
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
             const loginData = {
-              rollNum: values.rollNum,
+              rollNumber: values.rollNumber,
               name: values.fname,
-              employeeId: values.employeeId,
+              emplyoeeId: values.emplyoeeId,
+              designation: values.designation,
               branch: values.branch,
               year: values.year,
               userName: values.email,
@@ -171,15 +147,12 @@ const FirebaseRegister = ({ ...others }) => {
               const data = await response.json();
               if (response.status === 200) {
                 alert("success");
-                // setLogin(true);
               }
 
               console.log(data);
 
               if (scriptedRef.current) {
                 setStatus({ success: true });
-
-                // handleRegisterSubmit(loginData);
                 setSubmitting(false);
                 console.log(values);
               }
@@ -248,9 +221,9 @@ const FirebaseRegister = ({ ...others }) => {
                     fullWidth
                     label="Roll Number"
                     margin="normal"
-                    value={values.rollNum}
+                    value={values.rollNumber}
                     onChange={handleChange}
-                    name="rollNum"
+                    name="rollNumber"
                     type="number"
                     defaultValue=""
                     sx={{ ...theme.typography.customInput }}
@@ -262,9 +235,9 @@ const FirebaseRegister = ({ ...others }) => {
                     fullWidth
                     label="Emplyoee ID"
                     margin="normal"
-                    value={values.employeeId}
+                    value={values.emplyoeeId}
                     onChange={handleChange}
-                    name="rollNum"
+                    name="emplyoeeId"
                     type="number"
                     defaultValue=""
                     sx={{ ...theme.typography.customInput }}
@@ -273,21 +246,35 @@ const FirebaseRegister = ({ ...others }) => {
               )}
             </Grid>
             <Grid container spacing={matchDownSM ? 0 : 2}>
-              {/* {user.student && ( */}
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Year"
-                  value={values.year}
-                  margin="normal"
-                  name="year"
-                  type="number"
-                  onChange={handleChange}
-                  defaultValue=""
-                  sx={{ ...theme.typography.customInput }}
-                />
-              </Grid>
-              {/* )} */}
+              {user.student ? (
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Year"
+                    value={values.year}
+                    margin="normal"
+                    name="year"
+                    type="number"
+                    onChange={handleChange}
+                    defaultValue=""
+                    sx={{ ...theme.typography.customInput }}
+                  />
+                </Grid>
+              ) : (
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Designation"
+                    value={values.designation}
+                    margin="normal"
+                    name="designation"
+                    type="text"
+                    onChange={handleChange}
+                    defaultValue=""
+                    sx={{ ...theme.typography.customInput }}
+                  />
+                </Grid>
+              )}
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth

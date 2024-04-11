@@ -67,6 +67,8 @@ const ProfileSection = () => {
     navigate("/pages/Login/Login3");
 
     localStorage.removeItem("login");
+    localStorage.removeItem("user");
+
     console.log("Logout");
   };
 
