@@ -32,9 +32,8 @@ const QrCode = () => {
     branch: "",
   });
 
-  const data = localStorage.getItem("user");
-
   const handleAdd = () => {
+    const data = localStorage.getItem("user");
     if (data === "true") {
       setFormData({
         name: "",

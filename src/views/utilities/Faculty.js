@@ -25,8 +25,11 @@ import {
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import MainCard from "ui-component/cards/MainCard";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 
 import { Select } from "@mui/material";
+import { EditNotifications } from "@mui/icons-material";
 // Dummy student data
 const initialStudentData = {
   id: "",
@@ -41,17 +44,15 @@ const initialStudentData = {
 
 const Faculty = () => {
   const [students, setStudents] = useState([]);
-  const [anchorEl, setAnchorEl] = useState(null);
+
   const [openModal, setOpenModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
-  const [formData, setFormData] = useState(initialStudentData);
-  const [student, setStudent] = useState([]);
-  console.log("student: ", students);
+  const [formData, setFormData] = useState([]);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  useEffect(() => {
+  const handleGetApi = () => {
     fetch("http://localhost:3000/api/faculty/getAllFaculty")
       .then((response) => {
         if (!response.ok) {
@@ -66,35 +67,53 @@ const Faculty = () => {
         console.error("There was a problem with the fetch operation:", error);
         setError(error);
       });
+  };
+
+  useEffect(() => {
+    handleGetApi();
   }, []);
 
   const handleEdit = (student) => {
     const data = localStorage.getItem("user");
     if (data === "true") {
-      setModalTitle("Edit Faculty");
       setFormData(student);
+      setModalTitle("Edit Faculty");
       setOpenModal(true);
-      handleMenuClose();
     } else {
       alert("Required Access To modify");
     }
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = (emplyoeeId) => {
     const data = localStorage.getItem("user");
+
     if (data === "true") {
-      setStudents(students.filter((student) => student.id !== id));
+      fetch(
+        `http://localhost:3000/api/faculty/deleteFacultyById/${emplyoeeId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          handleGetApi();
+          alert("Faculty deleted successfully");
+        })
+        .catch((error) => {
+          console.error("There was a problem with the fetch operation:", error);
+          alert("There was an error deleting the Faculty");
+        });
     } else {
       alert("Required Access To Delete");
     }
-  };
-
-  const handleUpdate = () => {
-    const updatedStudents = students.map((student) =>
-      student.id === formData.id ? formData : student
-    );
-    setStudents(updatedStudents);
-    handleCloseModal();
   };
 
   const handleAdd = () => {
@@ -104,16 +123,61 @@ const Faculty = () => {
       setFormData(initialStudentData);
       setOpenModal(true);
     } else {
-      alert("Required Access To Delete");
+      alert("Required Access To modify");
     }
   };
 
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  const handleStudentAction = () => {
+    const data = localStorage.getItem("user");
+    if (data === "true") {
+      const requestBody = {
+        name: formData.name,
+        designation: formData.designation,
+        branch: formData.branch,
+        emplyoeeId: formData.emplyoeeId,
+        entryTime: formData.entrytime,
+        exitTime: formData.exittime,
+      };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
+      const method = modalTitle === "Add Faculty" ? "POST" : "PUT";
+      const url =
+        modalTitle === "Add Faculty"
+          ? "http://localhost:3000/api/faculty/insertFaculty"
+          : "http://localhost:3000/api/faculty/updateById";
+
+      fetch(url, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log("Success:", data);
+          handleCloseModal();
+
+          // Update the state or any other UI updates as needed
+          if (modalTitle === "Add Student") {
+            setStudents([...students, data]); // Assuming the API returns the new student object
+          } else {
+            const updatedStudents = students.map((s) =>
+              s.id === data.id ? data : s
+            );
+            setStudents(updatedStudents);
+          }
+        })
+        .catch((error) => {
+          console.error("There was a problem with the fetch operation:", error);
+        });
+    } else {
+      alert("Required Access To modify");
+    }
   };
 
   const handleCloseModal = () => {
@@ -196,28 +260,15 @@ const Faculty = () => {
                       <TableCell>{student.entrytime}</TableCell>
                       <TableCell>{student.exittime}</TableCell>
                       <TableCell>
-                        <IconButton
-                          aria-label="more"
-                          aria-controls="student-menu"
-                          aria-haspopup="true"
-                          onClick={handleMenuOpen}
-                        >
-                          <MoreVertIcon />
-                        </IconButton>
-                        <Menu
-                          id="student-menu"
-                          anchorEl={anchorEl}
-                          keepMounted
-                          open={Boolean(anchorEl)}
-                          onClose={handleMenuClose}
-                        >
-                          <MenuItem onClick={() => handleEdit(student)}>
-                            Edit
-                          </MenuItem>
-                          <MenuItem onClick={() => handleDelete(student.id)}>
-                            Delete
-                          </MenuItem>
-                        </Menu>
+                        <EditIcon
+                          style={{ cursor: "pointer" }}
+                          onClick={() => handleEdit(student)}
+                        />
+
+                        <DeleteIcon
+                          style={{ cursor: "pointer" }}
+                          onClick={() => handleDelete(student.emplyoeeId)}
+                        />
                       </TableCell>
                     </TableRow>
                   ))}
@@ -305,29 +356,22 @@ const Faculty = () => {
           />
           <TextField
             fullWidth
-            label="Roll Number"
-            name="rollNumber"
-            value={formData.rollNumber}
+            label="Employee Id"
+            name="emplyoeeId"
+            value={formData.emplyoeeId}
             onChange={handleInputChange}
             margin="normal"
           />
 
           <TextField
             fullWidth
-            label="Year"
-            name="year"
-            value={formData.year}
+            label="Designation"
+            name="designation"
+            value={formData.designation}
             onChange={handleInputChange}
             margin="normal"
           />
-          <TextField
-            fullWidth
-            label="Section"
-            name="section"
-            value={formData.section}
-            onChange={handleInputChange}
-            margin="normal"
-          />
+
           <TextField
             fullWidth
             label="Entry Time"
@@ -349,10 +393,10 @@ const Faculty = () => {
           <Box display={"flex"} justifyContent={"center"}>
             <Button
               variant="contained"
-              onClick={modalTitle === "Add Student" ? handleAdd : handleUpdate}
+              onClick={handleStudentAction}
               style={{ marginRight: "1rem" }}
             >
-              {modalTitle === "Add Student" ? "Add" : "Update"}
+              {modalTitle === "Add Faculty" ? "Add" : "Update"}
             </Button>
             <Button
               variant="contained"

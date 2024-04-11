@@ -8,8 +8,6 @@ import {
   TableHead,
   TableRow,
   Paper,
-  IconButton,
-  Menu,
   MenuItem,
   Button,
   Modal,
@@ -23,11 +21,10 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import MainCard from "ui-component/cards/MainCard";
-
+import EditIcon from "@mui/icons-material/Edit";
 import { Select } from "@mui/material";
-// Dummy student data
+import DeleteIcon from "@mui/icons-material/Delete";
 const initialStudentData = {
   id: "",
   name: "",
@@ -39,172 +36,17 @@ const initialStudentData = {
   exittime: "",
 };
 
-const studentsData = [
-  {
-    id: 1,
-    name: "John Doe",
-    rollNumber: "87287",
-    year: "2024",
-    branch: "CSE",
-    section: "A",
-    entrytime: "8.30",
-    exittime: "5.30",
-  },
-  {
-    id: 2,
-    name: "Jane Doe",
-    rollNumber: "87887",
-    year: "2024",
-    branch: "MECH",
-    section: "B",
-    entrytime: "8.45",
-    exittime: "5.30",
-  },
-  {
-    id: 3,
-    name: "Alice Smith",
-    rollNumber: "88512",
-    year: "2023",
-    branch: "ECE",
-    section: "A",
-    entrytime: "9.00",
-    exittime: "6.00",
-  },
-  {
-    id: 4,
-    name: "Bob Johnson",
-    rollNumber: "89523",
-    year: "2023",
-    branch: "CIVIL",
-    section: "B",
-    entrytime: "9.15",
-    exittime: "6.15",
-  },
-  {
-    id: 5,
-    name: "Emily Wilson",
-    rollNumber: "90145",
-    year: "2022",
-    branch: "CSE",
-    section: "C",
-    entrytime: "9.30",
-    exittime: "6.30",
-  },
-  {
-    id: 6,
-    name: "Michael Brown",
-    rollNumber: "91234",
-    year: "2022",
-    branch: "MECH",
-    section: "A",
-    entrytime: "9.45",
-    exittime: "6.45",
-  },
-  {
-    id: 7,
-    name: "Sophia Miller",
-    rollNumber: "92345",
-    year: "2023",
-    branch: "ECE",
-    section: "B",
-    entrytime: "10.00",
-    exittime: "7.00",
-  },
-  {
-    id: 8,
-    name: "David Davis",
-    rollNumber: "93456",
-    year: "2024",
-    branch: "CIVIL",
-    section: "A",
-    entrytime: "10.15",
-    exittime: "7.15",
-  },
-  {
-    id: 9,
-    name: "Olivia Smith",
-    rollNumber: "94567",
-    year: "2022",
-    branch: "CSE",
-    section: "B",
-    entrytime: "10.30",
-    exittime: "7.30",
-  },
-  {
-    id: 10,
-    name: "William Johnson",
-    rollNumber: "95678",
-    year: "2023",
-    branch: "MECH",
-    section: "C",
-    entrytime: "10.45",
-    exittime: "7.45",
-  },
-  {
-    id: 11,
-    name: "Emma Wilson",
-    rollNumber: "96789",
-    year: "2024",
-    branch: "ECE",
-    section: "A",
-    entrytime: "11.00",
-    exittime: "8.00",
-  },
-  {
-    id: 12,
-    name: "James Brown",
-    rollNumber: "97890",
-    year: "2022",
-    branch: "CIVIL",
-    section: "B",
-    entrytime: "11.15",
-    exittime: "8.15",
-  },
-  {
-    id: 13,
-    name: "Isabella Miller",
-    rollNumber: "98901",
-    year: "2023",
-    branch: "CSE",
-    section: "A",
-    entrytime: "11.30",
-    exittime: "8.30",
-  },
-  {
-    id: 14,
-    name: "Benjamin Davis",
-    rollNumber: "99012",
-    year: "2024",
-    branch: "MECH",
-    section: "B",
-    entrytime: "11.45",
-    exittime: "8.45",
-  },
-  {
-    id: 15,
-    name: "Ava Smith",
-    rollNumber: "99123",
-    year: "2022",
-    branch: "ECE",
-    section: "C",
-    entrytime: "12.00",
-    exittime: "9.00",
-  },
-];
-
 const Students = () => {
   const [students, setStudents] = useState([]);
-  const [anchorEl, setAnchorEl] = useState(null);
+
   const [openModal, setOpenModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
-  const [formData, setFormData] = useState(initialStudentData);
-  const [student, setStudent] = useState([]);
-  console.log("student: ", students);
+  const [formData, setFormData] = useState([]);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  useEffect(() => {
+  const handleGetApi = () => {
     fetch("http://localhost:3000/api/students/getAllStudents")
       .then((response) => {
         if (!response.ok) {
@@ -219,45 +61,85 @@ const Students = () => {
         console.error("There was a problem with the fetch operation:", error);
         setError(error);
       });
+  };
+
+  useEffect(() => {
+    handleGetApi();
   }, []);
 
   const handleEdit = (student) => {
     const data = localStorage.getItem("user");
     if (data === "true") {
-      setModalTitle("Edit Student");
       setFormData(student);
+      setModalTitle("Edit Student");
       setOpenModal(true);
-      handleMenuClose();
     } else {
       alert("Required Access To modify");
     }
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = (rollNumber) => {
+    const data = localStorage.getItem("user");
+
+    if (data === "true") {
+      fetch(
+        `http://localhost:3000/api/students/deleteStudentByRollNumber/${rollNumber}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          handleGetApi();
+          alert("Student deleted successfully");
+        })
+        .catch((error) => {
+          console.error("There was a problem with the fetch operation:", error);
+          alert("There was an error deleting the student");
+        });
+    } else {
+      alert("Required Access To Delete");
+    }
+  };
+
+  const handleAdd = () => {
     const data = localStorage.getItem("user");
     if (data === "true") {
-      setStudents(students.filter((student) => student.id !== id));
+      setModalTitle("Add Student");
+      setFormData(initialStudentData);
+      setOpenModal(true);
     } else {
       alert("Required Access To modify");
     }
   };
 
-  const handleUpdate = () => {
+  const handleStudentAction = () => {
     const data = localStorage.getItem("user");
     if (data === "true") {
       const requestBody = {
-        rollNumber: formData.rollNumber,
         name: formData.name,
-        year: formData.year,
+        rollNumber: formData.rollNumber,
         branch: formData.branch,
+        year: formData.year,
         entryTime: formData.entrytime,
         exitTime: formData.exittime,
       };
 
-      // Determine the HTTP method based on your API route
-      const method = "PUT";
+      const method = modalTitle === "Add Student" ? "POST" : "PUT";
+      const url =
+        modalTitle === "Add Student"
+          ? "http://localhost:3000/api/students/insertStudent"
+          : "http://localhost:3000/api/students/updateByRollNum";
 
-      fetch("http://localhost:3000/api/students/updateByRollNum", {
+      fetch(url, {
         method: method,
         headers: {
           "Content-Type": "application/json",
@@ -275,33 +157,21 @@ const Students = () => {
           handleCloseModal();
 
           // Update the state or any other UI updates as needed
+          if (modalTitle === "Add Student") {
+            setStudents([...students, data]); // Assuming the API returns the new student object
+          } else {
+            const updatedStudents = students.map((s) =>
+              s.id === data.id ? data : s
+            );
+            setStudents(updatedStudents);
+          }
         })
         .catch((error) => {
           console.error("There was a problem with the fetch operation:", error);
-          // Handle the error
         });
     } else {
       alert("Required Access To modify");
     }
-  };
-
-  const handleAdd = () => {
-    const data = localStorage.getItem("user");
-    if (data === "true") {
-      setModalTitle("Add Student");
-      setFormData(initialStudentData);
-      setOpenModal(true);
-    } else {
-      alert("Required Access To modify");
-    }
-  };
-
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
   };
 
   const handleCloseModal = () => {
@@ -384,29 +254,15 @@ const Students = () => {
                       <TableCell>{student.entryTime}</TableCell>
                       <TableCell>{student.exitTime}</TableCell>
                       <TableCell>
-                        <IconButton
-                          aria-label="more"
-                          aria-controls="student-menu"
-                          aria-haspopup="true"
-                          onClick={handleMenuOpen}
-                        >
-                          <MoreVertIcon />
-                        </IconButton>
-                        <Menu
-                          id="student-menu"
-                          anchorEl={anchorEl}
-                          keepMounted
-                          open={Boolean(anchorEl)}
-                          onClose={handleMenuClose}
-                        >
-                          <MenuItem onClick={() => handleEdit(student)}>
-                            Edit
-                          </MenuItem>
+                        <EditIcon
+                          style={{ cursor: "pointer" }}
+                          onClick={() => handleEdit(student)}
+                        />
 
-                          <MenuItem onClick={() => handleDelete(student.id)}>
-                            Delete
-                          </MenuItem>
-                        </Menu>
+                        <DeleteIcon
+                          style={{ cursor: "pointer" }}
+                          onClick={() => handleDelete(student.rollNumber)}
+                        />
                       </TableCell>
                     </TableRow>
                   ))}
@@ -480,7 +336,6 @@ const Students = () => {
               <MenuItem value="ece">ECE</MenuItem>
               <MenuItem value="mechanical">Mechanical</MenuItem>
               <MenuItem value="civil">Civil</MenuItem>
-              {/* Add more branches as needed */}
             </Select>
           </FormControl>
 
@@ -509,14 +364,7 @@ const Students = () => {
             onChange={handleInputChange}
             margin="normal"
           />
-          {/* <TextField
-            fullWidth
-            label="Section"
-            name="section"
-            value={formData.section}
-            onChange={handleInputChange}
-            margin="normal"
-          /> */}
+
           <TextField
             fullWidth
             label="Entry Time"
@@ -538,7 +386,7 @@ const Students = () => {
           <Box display={"flex"} justifyContent={"center"}>
             <Button
               variant="contained"
-              onClick={modalTitle === "Add Student" ? handleAdd : handleUpdate}
+              onClick={handleStudentAction}
               style={{ marginRight: "1rem" }}
             >
               {modalTitle === "Add Student" ? "Add" : "Update"}
