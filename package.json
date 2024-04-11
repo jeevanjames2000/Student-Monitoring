@@ -1,8 +1,8 @@
 {
-  "name": "berry-free-material-react-cra",
+  "name": "college-panel",
   "version": "3.4.2",
   "private": true,
-  "homepage": "https://berrydashboard.io/free",
+  "homepage": "https://college-adminpanel.io/college",
   "dependencies": {
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.3",

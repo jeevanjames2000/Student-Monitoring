@@ -62,28 +62,28 @@ const FirebaseLogin = ({ ...others }) => {
   });
   console.log("loginData: ", loginData);
 
-  const handleLoginSubmit = async (loginData) => {
-    // e.preventDefault();
+  const handleLoginSubmit = async (data) => {
     try {
       const response = await fetch("http://localhost:3000/api/students/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(loginData),
+        body: JSON.stringify(data),
       });
 
-      const data = await response.json();
+      const responseData = await response.json();
       if (response.status === 200) {
         localStorage.setItem("login", true);
         navigate("/dashboard/default");
         setLogin(true);
       }
-      console.log(data);
+      console.log(responseData);
     } catch (error) {
       console.error("Error:", error);
     }
   };
+
   return (
     <>
       <Formik
@@ -101,13 +101,13 @@ const FirebaseLogin = ({ ...others }) => {
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
-            setLoginData({
-              ...loginData,
+            const data = {
               userName: values.email,
               password: values.password,
-            });
+            };
 
-            handleLoginSubmit(loginData);
+            handleLoginSubmit(data);
+
             if (scriptedRef.current) {
               setStatus({ success: true });
               setSubmitting(false);

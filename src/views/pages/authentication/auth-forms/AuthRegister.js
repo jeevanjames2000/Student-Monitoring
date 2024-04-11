@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-
+import MenuItem from "@mui/material/MenuItem";
 // material-ui
 import { useTheme } from "@mui/material/styles";
 import {
@@ -16,6 +16,7 @@ import {
   IconButton,
   InputAdornment,
   InputLabel,
+  Select,
   OutlinedInput,
   TextField,
   Typography,
@@ -46,6 +47,7 @@ const FirebaseRegister = ({ ...others }) => {
   const customization = useSelector((state) => state.customization);
   const [showPassword, setShowPassword] = useState(false);
   const [checked, setChecked] = useState(true);
+  const [user, setUser] = useState({ student: false, faculty: false });
 
   const [strength, setStrength] = useState(0);
   const [level, setLevel] = useState();
@@ -76,6 +78,7 @@ const FirebaseRegister = ({ ...others }) => {
   const [loginData, setLoginData] = useState({
     rollNum: "",
     name: "",
+    employeeId: "",
     year: "",
     branch: "",
     userName: "",
@@ -107,6 +110,16 @@ const FirebaseRegister = ({ ...others }) => {
       console.error("Error:", error);
     }
   };
+  const [select, setSelect] = useState("");
+  const handleDropChange = (event) => {
+    const selectedUserType = event.target.value;
+    setSelect(selectedUserType);
+
+    setUser({
+      ...user,
+      [selectedUserType]: !user[selectedUserType], // toggle the value
+    });
+  };
 
   return (
     <>
@@ -114,6 +127,7 @@ const FirebaseRegister = ({ ...others }) => {
         initialValues={{
           fname: "",
           rollNum: "",
+          employeeId: "",
           branch: "",
           email: "",
           password: "",
@@ -131,37 +145,51 @@ const FirebaseRegister = ({ ...others }) => {
             const loginData = {
               rollNum: values.rollNum,
               name: values.fname,
+              employeeId: values.employeeId,
               branch: values.branch,
               year: values.year,
               userName: values.email,
               password: values.password,
             };
 
-            const response = await fetch(
-              "http://localhost:3000/api/students/register",
-              {
+            let apiUrl = "";
+            if (user.student) {
+              apiUrl = "http://localhost:3000/api/students/register";
+            } else if (user.faculty) {
+              apiUrl = "http://localhost:3000/api/faculty/register";
+            }
+
+            if (apiUrl) {
+              const response = await fetch(apiUrl, {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
                 },
                 body: JSON.stringify(loginData),
+              });
+
+              const data = await response.json();
+              if (response.status === 200) {
+                alert("success");
+                // setLogin(true);
               }
-            );
 
-            const data = await response.json();
-            if (response.status === 200) {
-              alert("success");
-              // setLogin(true);
-            }
+              console.log(data);
 
-            console.log(data);
+              if (scriptedRef.current) {
+                setStatus({ success: true });
 
-            if (scriptedRef.current) {
-              setStatus({ success: true });
-
-              // handleRegisterSubmit(loginData);
-              setSubmitting(false);
-              console.log(values);
+                // handleRegisterSubmit(loginData);
+                setSubmitting(false);
+                console.log(values);
+              }
+            } else {
+              console.error("User type is not selected");
+              if (scriptedRef.current) {
+                setStatus({ success: false });
+                setErrors({ submit: "User type is not selected" });
+                setSubmitting(false);
+              }
             }
           } catch (err) {
             console.error(err);
@@ -184,6 +212,23 @@ const FirebaseRegister = ({ ...others }) => {
         }) => (
           <form noValidate onSubmit={handleSubmit} {...others}>
             <Grid container spacing={matchDownSM ? 0 : 2}>
+              <Grid item xs={12} sm={12}>
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">
+                    User Type
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={select}
+                    label="User Type"
+                    onChange={handleDropChange}
+                  >
+                    <MenuItem value={"student"}>Student</MenuItem>
+                    <MenuItem value={"faculty"}>Faculty</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
@@ -197,21 +242,38 @@ const FirebaseRegister = ({ ...others }) => {
                   sx={{ ...theme.typography.customInput }}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Roll Number"
-                  margin="normal"
-                  value={values.rollNum}
-                  onChange={handleChange}
-                  name="rollNum"
-                  type="number"
-                  defaultValue=""
-                  sx={{ ...theme.typography.customInput }}
-                />
-              </Grid>
+              {user.student ? (
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Roll Number"
+                    margin="normal"
+                    value={values.rollNum}
+                    onChange={handleChange}
+                    name="rollNum"
+                    type="number"
+                    defaultValue=""
+                    sx={{ ...theme.typography.customInput }}
+                  />
+                </Grid>
+              ) : (
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Emplyoee ID"
+                    margin="normal"
+                    value={values.employeeId}
+                    onChange={handleChange}
+                    name="rollNum"
+                    type="number"
+                    defaultValue=""
+                    sx={{ ...theme.typography.customInput }}
+                  />
+                </Grid>
+              )}
             </Grid>
             <Grid container spacing={matchDownSM ? 0 : 2}>
+              {/* {user.student && ( */}
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
@@ -225,6 +287,7 @@ const FirebaseRegister = ({ ...others }) => {
                   sx={{ ...theme.typography.customInput }}
                 />
               </Grid>
+              {/* )} */}
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
@@ -239,6 +302,7 @@ const FirebaseRegister = ({ ...others }) => {
                 />
               </Grid>
             </Grid>
+
             <FormControl
               fullWidth
               error={Boolean(touched.email && errors.email)}
