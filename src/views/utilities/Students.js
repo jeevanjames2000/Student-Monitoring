@@ -245,11 +245,41 @@ const Students = () => {
   const handleUpdate = () => {
     const data = localStorage.getItem("user");
     if (data === "true") {
-      const updatedStudents = students.map((student) =>
-        student.id === formData.id ? formData : student
-      );
-      setStudents(updatedStudents);
-      handleCloseModal();
+      const requestBody = {
+        rollNumber: formData.rollNumber,
+        name: formData.name,
+        year: formData.year,
+        branch: formData.branch,
+        entryTime: formData.entrytime,
+        exitTime: formData.exittime,
+      };
+
+      // Determine the HTTP method based on your API route
+      const method = "PUT";
+
+      fetch("http://localhost:3000/api/students/updateByRollNum", {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log("Success:", data);
+          handleCloseModal();
+
+          // Update the state or any other UI updates as needed
+        })
+        .catch((error) => {
+          console.error("There was a problem with the fetch operation:", error);
+          // Handle the error
+        });
     } else {
       alert("Required Access To modify");
     }
@@ -351,8 +381,8 @@ const Students = () => {
                           Show Qr Code
                         </Button>
                       </TableCell>
-                      <TableCell>{student.entrytime}</TableCell>
-                      <TableCell>{student.exittime}</TableCell>
+                      <TableCell>{student.entryTime}</TableCell>
+                      <TableCell>{student.exitTime}</TableCell>
                       <TableCell>
                         <IconButton
                           aria-label="more"
@@ -479,14 +509,14 @@ const Students = () => {
             onChange={handleInputChange}
             margin="normal"
           />
-          <TextField
+          {/* <TextField
             fullWidth
             label="Section"
             name="section"
             value={formData.section}
             onChange={handleInputChange}
             margin="normal"
-          />
+          /> */}
           <TextField
             fullWidth
             label="Entry Time"
