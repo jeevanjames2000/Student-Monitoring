@@ -358,12 +358,12 @@ const PopularCard = ({ isLoading }) => {
               </Grid>
             </Grid>
           </CardContent>
-          <CardActions sx={{ p: 1.25, pt: 0, justifyContent: "center" }}>
+          {/* <CardActions sx={{ p: 1.25, pt: 0, justifyContent: "center" }}>
             <Button size="small" disableElevation>
               View All
               <ChevronRightOutlinedIcon />
             </Button>
-          </CardActions>
+          </CardActions> */}
         </MainCard>
       )}
     </>
