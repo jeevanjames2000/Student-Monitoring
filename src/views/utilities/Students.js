@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Grid,
   Table,
@@ -25,6 +25,7 @@ import MainCard from "ui-component/cards/MainCard";
 import EditIcon from "@mui/icons-material/Edit";
 import { Select } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { MyContext } from "store/useContext";
 const initialStudentData = {
   id: "",
   name: "",
@@ -45,6 +46,7 @@ const Students = () => {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const { studentData } = useContext(MyContext);
 
   const handleGetApi = () => {
     fetch("http://localhost:3000/api/students/getAllStudents")
@@ -234,7 +236,7 @@ const Students = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {students
+                {studentData
                   .slice(
                     currentPage * rowsPerPage,
                     currentPage * rowsPerPage + rowsPerPage

@@ -11,8 +11,52 @@ import { useNavigate } from "react-router";
 
 const App = () => {
   const [login, setLogin] = useState(false);
+  const [facultyData, setFacultyData] = useState([]);
+  const [studentData, setStudentData] = useState([]);
+
+  const handleGetApi = () => {
+    const studentFetch = fetch(
+      "http://localhost:3000/api/students/getAllStudents"
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .catch((error) => {
+        console.error("Error fetching student data:", error);
+        throw error; // Re-throw the error to be caught by Promise.all()
+      });
+
+    const facultyFetch = fetch(
+      "http://localhost:3000/api/faculty/getAllFaculty"
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .catch((error) => {
+        console.error("Error fetching faculty data:", error);
+        throw error; // Re-throw the error to be caught by Promise.all()
+      });
+
+    Promise.all([studentFetch, facultyFetch])
+      .then(([studentData, facultyData]) => {
+        // Both requests succeeded, update the state with the data
+        setStudentData(studentData);
+        setFacultyData(facultyData);
+      })
+      .catch((error) => {
+        // At least one request failed, handle the error here
+        console.error("Error fetching data:", error);
+      });
+  };
 
   useEffect(() => {
+    handleGetApi();
     const localStorageLogin = localStorage.getItem("login");
     if (localStorageLogin) {
       setLogin(true);
@@ -34,7 +78,16 @@ const App = () => {
       <ThemeProvider theme={themes(customization)}>
         <CssBaseline />
         <NavigationScroll>
-          <MyContext.Provider value={{ login, setLogin }}>
+          <MyContext.Provider
+            value={{
+              login,
+              setLogin,
+              facultyData,
+              studentData,
+              setFacultyData,
+              setStudentData,
+            }}
+          >
             {(!login && <Login setLogin={setLogin} />) || <Routes />}
           </MyContext.Provider>
         </NavigationScroll>

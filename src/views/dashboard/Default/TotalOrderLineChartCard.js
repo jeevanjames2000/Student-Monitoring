@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // material-ui
 import { useTheme, styled } from "@mui/material/styles";
@@ -67,9 +67,31 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
   const theme = useTheme();
 
   const [timeValue, setTimeValue] = useState(false);
+  const [faculty, SetFaculty] = useState([]);
   const handleChangeTime = (event, newValue) => {
     setTimeValue(newValue);
   };
+  const handleGetApi = () => {
+    fetch("http://localhost:3000/api/faculty/getAllFaculty")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        SetFaculty(data);
+      })
+      .catch((error) => {
+        console.error("There was a problem with the fetch operation:", error);
+        // setError(error);
+      });
+  };
+
+  useEffect(() => {
+    handleGetApi();
+  });
+  const data = faculty.length;
 
   return (
     <>
@@ -132,7 +154,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                               mb: 0.75,
                             }}
                           >
-                            108
+                            {data}
                           </Typography>
                         ) : (
                           <Typography
@@ -144,7 +166,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                               mb: 0.75,
                             }}
                           >
-                            961
+                            {data}
                           </Typography>
                         )}
                       </Grid>

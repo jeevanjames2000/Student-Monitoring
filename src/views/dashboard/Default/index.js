@@ -1,22 +1,42 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 // material-ui
-import { Grid } from '@mui/material';
+import { Grid } from "@mui/material";
 
 // project imports
-import EarningCard from './EarningCard';
-import PopularCard from './PopularCard';
-import TotalOrderLineChartCard from './TotalOrderLineChartCard';
-import TotalIncomeDarkCard from './TotalIncomeDarkCard';
-import TotalIncomeLightCard from './TotalIncomeLightCard';
-import TotalGrowthBarChart from './TotalGrowthBarChart';
-import { gridSpacing } from 'store/constant';
+import EarningCard from "./EarningCard";
+import PopularCard from "./PopularCard";
+import TotalOrderLineChartCard from "./TotalOrderLineChartCard";
+import TotalIncomeDarkCard from "./TotalIncomeDarkCard";
+import TotalIncomeLightCard from "./TotalIncomeLightCard";
+import TotalGrowthBarChart from "./TotalGrowthBarChart";
+import { gridSpacing } from "store/constant";
 
 // ==============================|| DEFAULT DASHBOARD ||============================== //
 
 const Dashboard = () => {
   const [isLoading, setLoading] = useState(true);
+  const [students, setStudents] = useState([]);
+
+  const handleGetApi = () => {
+    fetch("http://localhost:3000/api/students/getAllStudents")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setStudents(data);
+      })
+      .catch((error) => {
+        console.error("There was a problem with the fetch operation:", error);
+        // setError(error);
+      });
+  };
+
   useEffect(() => {
+    handleGetApi();
     setLoading(false);
   }, []);
 
@@ -25,7 +45,7 @@ const Dashboard = () => {
       <Grid item xs={12}>
         <Grid container spacing={gridSpacing}>
           <Grid item lg={4} md={6} sm={6} xs={12}>
-            <EarningCard isLoading={isLoading} />
+            <EarningCard isLoading={isLoading} students={students} />
           </Grid>
           <Grid item lg={4} md={6} sm={6} xs={12}>
             <TotalOrderLineChartCard isLoading={isLoading} />

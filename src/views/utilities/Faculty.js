@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Grid,
   Table,
@@ -30,6 +30,7 @@ import EditIcon from "@mui/icons-material/Edit";
 
 import { Select } from "@mui/material";
 import { EditNotifications } from "@mui/icons-material";
+import { MyContext } from "store/useContext";
 // Dummy student data
 const initialStudentData = {
   id: "",
@@ -51,6 +52,7 @@ const Faculty = () => {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const { facultyData } = useContext(MyContext);
 
   const handleGetApi = () => {
     fetch("http://localhost:3000/api/faculty/getAllFaculty")
@@ -240,7 +242,7 @@ const Faculty = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {students
+                {facultyData
                   .slice(
                     currentPage * rowsPerPage,
                     currentPage * rowsPerPage + rowsPerPage
