@@ -62,9 +62,9 @@ const FirebaseLogin = ({ ...others }) => {
     try {
       let ApiUrl = "";
       if (user.student) {
-        ApiUrl = "http://localhost:3000/api/students/login";
+        ApiUrl = `https://student-monitoring-backend.onrender.com/api/students/login`;
       } else if (user.faculty) {
-        ApiUrl = "http://localhost:3000/api/faculty/login";
+        ApiUrl = `https://student-monitoring-backend.onrender.com/api/faculty/login`;
       }
       const response = await fetch(ApiUrl, {
         method: "POST",

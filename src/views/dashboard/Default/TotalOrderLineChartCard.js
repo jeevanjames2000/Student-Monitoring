@@ -72,7 +72,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
     setTimeValue(newValue);
   };
   const handleGetApi = () => {
-    fetch("http://localhost:3000/api/faculty/getAllFaculty")
+    fetch("https://student-monitoring-backend.onrender.com/api/faculty/getAllFaculty")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");

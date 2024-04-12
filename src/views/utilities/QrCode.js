@@ -67,7 +67,7 @@ const QrCode = () => {
   const handleSubmit = async () => {
     try {
       const response = await fetch(
-        "http://localhost:3000/api/faculty/generateNewQr",
+        "https://student-monitoring-backend.onrender.com/api/faculty/generateNewQr",
         {
           method: "POST",
           headers: {

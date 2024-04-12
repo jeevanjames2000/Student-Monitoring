@@ -49,7 +49,9 @@ const Students = () => {
   const { studentData } = useContext(MyContext);
 
   const handleGetApi = () => {
-    fetch("http://localhost:3000/api/students/getAllStudents")
+    fetch(
+      "https://student-monitoring-backend.onrender.com/api/students/getAllStudents"
+    )
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -85,7 +87,7 @@ const Students = () => {
 
     if (data === "true") {
       fetch(
-        `http://localhost:3000/api/students/deleteStudentByRollNumber/${rollNumber}`,
+        `https://student-monitoring-backend.onrender.com/api/students/deleteStudentByRollNumber/${rollNumber}`,
         {
           method: "DELETE",
           headers: {
@@ -138,8 +140,8 @@ const Students = () => {
       const method = modalTitle === "Add Student" ? "POST" : "PUT";
       const url =
         modalTitle === "Add Student"
-          ? "http://localhost:3000/api/students/insertStudent"
-          : "http://localhost:3000/api/students/updateByRollNum";
+          ? "https://student-monitoring-backend.onrender.com/api/students/insertStudent"
+          : "https://student-monitoring-backend.onrender.com/api/students/updateByRollNum";
 
       fetch(url, {
         method: method,

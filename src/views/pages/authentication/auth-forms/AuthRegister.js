@@ -130,9 +130,9 @@ const FirebaseRegister = ({ ...others }) => {
 
             let apiUrl = "";
             if (user.student) {
-              apiUrl = "http://localhost:3000/api/students/register";
+              apiUrl = "https://student-monitoring-backend.onrender.com/api/students/register";
             } else if (user.faculty) {
-              apiUrl = "http://localhost:3000/api/faculty/register";
+              apiUrl = "https://student-monitoring-backend.onrender.com/api/faculty/register";
             }
 
             if (apiUrl) {

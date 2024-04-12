@@ -16,7 +16,7 @@ const App = () => {
 
   const handleGetApi = () => {
     const studentFetch = fetch(
-      "http://localhost:3000/api/students/getAllStudents"
+      "https://student-monitoring-backend.onrender.com/api/students/getAllStudents"
     )
       .then((response) => {
         if (!response.ok) {
@@ -30,7 +30,7 @@ const App = () => {
       });
 
     const facultyFetch = fetch(
-      "http://localhost:3000/api/faculty/getAllFaculty"
+      "https://student-monitoring-backend.onrender.com/api/faculty/getAllFaculty"
     )
       .then((response) => {
         if (!response.ok) {

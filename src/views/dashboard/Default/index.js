@@ -19,7 +19,7 @@ const Dashboard = () => {
   const [students, setStudents] = useState([]);
 
   const handleGetApi = () => {
-    fetch("http://localhost:3000/api/students/getAllStudents")
+    fetch("https://student-monitoring-backend.onrender.com/api/students/getAllStudents")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");

@@ -23,13 +23,11 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import MainCard from "ui-component/cards/MainCard";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 
 import { Select } from "@mui/material";
-import { EditNotifications } from "@mui/icons-material";
 import { MyContext } from "store/useContext";
 // Dummy student data
 const initialStudentData = {
@@ -55,7 +53,9 @@ const Faculty = () => {
   const { facultyData } = useContext(MyContext);
 
   const handleGetApi = () => {
-    fetch("http://localhost:3000/api/faculty/getAllFaculty")
+    fetch(
+      `https://student-monitoring-backend.onrender.com/api/faculty/getAllFaculty`
+    )
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -91,7 +91,7 @@ const Faculty = () => {
 
     if (data === "true") {
       fetch(
-        `http://localhost:3000/api/faculty/deleteFacultyById/${emplyoeeId}`,
+        `https://student-monitoring-backend.onrender.com/api/faculty/deleteFacultyById/${emplyoeeId}`,
         {
           method: "DELETE",
           headers: {
@@ -144,8 +144,8 @@ const Faculty = () => {
       const method = modalTitle === "Add Faculty" ? "POST" : "PUT";
       const url =
         modalTitle === "Add Faculty"
-          ? "http://localhost:3000/api/faculty/insertFaculty"
-          : "http://localhost:3000/api/faculty/updateById";
+          ? `https://student-monitoring-backend.onrender.com/api/faculty/insertFaculty`
+          : `https://student-monitoring-backend.onrender.com/api/faculty/updateById`;
 
       fetch(url, {
         method: method,
