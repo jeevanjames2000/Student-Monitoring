@@ -258,16 +258,16 @@ const Students = () => {
                         </Button>
                       </TableCell>
                       <TableCell>
-                        {student.entryTime && student.entryTime.slice(0, 15)}
+                        {student.entryTime && student.entryTime.slice(0, 10)}
                       </TableCell>
                       <TableCell>
-                        {student.entryTime && student.entryTime.slice(15, 25)}
+                        {student.entryTime && student.entryTime.slice(11, 19)}
                       </TableCell>
                       <TableCell>
-                        {student.exitTime && student.exitTime.slice(0, 15)}
+                        {student.exitTime && student.exitTime.slice(0, 10)}
                       </TableCell>
                       <TableCell>
-                        {student.exitTime && student.exitTime.slice(15, 25)}
+                        {student.exitTime && student.exitTime.slice(11, 19)}
                       </TableCell>
 
                       <TableCell>
