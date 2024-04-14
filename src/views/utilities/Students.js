@@ -232,7 +232,9 @@ const Students = () => {
                   <TableCell>Branch</TableCell>
                   <TableCell>Year</TableCell>
                   <TableCell align="center">QR-Code</TableCell>
+                  <TableCell>Entry Date</TableCell>
                   <TableCell>Entry Time</TableCell>
+                  <TableCell>Exit Date</TableCell>
                   <TableCell>Exit Time</TableCell>
                   <TableCell>Actions</TableCell>
                 </TableRow>
@@ -255,8 +257,19 @@ const Students = () => {
                           Show Qr Code
                         </Button>
                       </TableCell>
-                      <TableCell>{student.entryTime}</TableCell>
-                      <TableCell>{student.exitTime}</TableCell>
+                      <TableCell>
+                        {student.entryTime && student.entryTime.slice(0, 15)}
+                      </TableCell>
+                      <TableCell>
+                        {student.entryTime && student.entryTime.slice(15, 25)}
+                      </TableCell>
+                      <TableCell>
+                        {student.exitTime && student.exitTime.slice(0, 15)}
+                      </TableCell>
+                      <TableCell>
+                        {student.exitTime && student.exitTime.slice(15, 25)}
+                      </TableCell>
+
                       <TableCell>
                         <EditIcon
                           style={{ cursor: "pointer" }}
