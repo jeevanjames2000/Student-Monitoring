@@ -69,7 +69,7 @@ const Students = () => {
 
   useEffect(() => {
     handleGetApi();
-  }, []);
+  });
 
   const handleEdit = (student) => {
     const data = localStorage.getItem("user");
@@ -101,9 +101,11 @@ const Students = () => {
           }
           return response.json();
         })
-        .then((data) => {
-          handleGetApi();
-          alert("Student deleted successfully");
+        .then((response) => {
+          if (response.ok) {
+            handleGetApi();
+            alert("Student deleted successfully");
+          }
         })
         .catch((error) => {
           console.error("There was a problem with the fetch operation:", error);
@@ -152,13 +154,16 @@ const Students = () => {
       })
         .then((response) => {
           if (!response.ok) {
+            handleCloseModal();
             throw new Error("Network response was not ok");
           }
           return response.json();
         })
-        .then((data) => {
-          console.log("Success:", data);
-          handleCloseModal();
+        .then((response) => {
+          if (response.ok) {
+            handleGetApi();
+            handleCloseModal();
+          }
 
           // Update the state or any other UI updates as needed
           if (modalTitle === "Add Student") {

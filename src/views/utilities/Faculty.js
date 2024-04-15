@@ -43,6 +43,7 @@ const initialStudentData = {
 
 const Faculty = () => {
   const [students, setStudents] = useState([]);
+  console.log("students: ", students);
 
   const [openModal, setOpenModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
@@ -100,15 +101,16 @@ const Faculty = () => {
         }
       )
         .then((response) => {
+          if (response.ok) {
+            handleGetApi();
+            alert("Faculty deleted successfully");
+          }
           if (!response.ok) {
             throw new Error("Network response was not ok");
           }
           return response.json();
         })
-        .then((data) => {
-          handleGetApi();
-          alert("Faculty deleted successfully");
-        })
+
         .catch((error) => {
           console.error("There was a problem with the fetch operation:", error);
           alert("There was an error deleting the Faculty");
@@ -155,15 +157,16 @@ const Faculty = () => {
         body: JSON.stringify(requestBody),
       })
         .then((response) => {
+          if (response.ok) {
+            handleGetApi();
+            handleCloseModal();
+          }
           if (!response.ok) {
             throw new Error("Network response was not ok");
           }
           return response.json();
         })
-        .then((data) => {
-          console.log("Success:", data);
-          handleCloseModal();
-
+        .then((response) => {
           // Update the state or any other UI updates as needed
           if (modalTitle === "Add Student") {
             setStudents([...students, data]); // Assuming the API returns the new student object
