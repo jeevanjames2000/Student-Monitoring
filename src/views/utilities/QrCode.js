@@ -12,7 +12,7 @@ import {
   CardContent,
   Box,
 } from "@mui/material";
-import QRCodeReact from "qrcode.react";
+import { toast } from "react-toastify";
 
 const QrCode = () => {
   const [students, setStudents] = useState([]);
@@ -48,7 +48,7 @@ const QrCode = () => {
       });
       setOpenModal(true);
     } else {
-      alert("Required Access To Add");
+      toast.error("Required Access To Add");
     }
   };
 
@@ -80,13 +80,21 @@ const QrCode = () => {
       const data = await response.json();
 
       if (response.ok) {
+        handleCloseModal();
+        toast.success("Qr Generated Successfully");
         setQrCodeDataUri(data.qrCodeDataUri);
         setStudents([...students, formData]);
-        handleCloseModal();
       } else {
+        handleCloseModal();
+
+        toast.error("Failed to generate QR code");
         console.error("Failed to generate QR code:", data.message);
       }
     } catch (error) {
+      handleCloseModal();
+
+      toast.error("Failed to generate QR code");
+
       console.error("Error generating QR code:", error);
     }
   };

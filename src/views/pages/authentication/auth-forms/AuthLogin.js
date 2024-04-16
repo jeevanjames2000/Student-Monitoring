@@ -36,6 +36,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { MyContext } from "store/useContext";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 
@@ -46,8 +47,7 @@ const FirebaseLogin = ({ ...others }) => {
   const [checked, setChecked] = useState(true);
   const navigate = useNavigate();
 
-  const { login, setLogin } = useContext(MyContext);
-  console.log("login: ", login);
+  const { setLogin } = useContext(MyContext);
 
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => {
@@ -76,13 +76,14 @@ const FirebaseLogin = ({ ...others }) => {
 
       const responseData = await response.json();
       if (response.status === 200) {
+        toast.success("Login Successfully");
         localStorage.setItem("login", true);
         navigate("/dashboard/default");
         setLogin(true);
         localStorage.setItem("user", JSON.stringify(responseData.type));
       }
-      console.log(responseData);
     } catch (error) {
+      toast.error("Invalid Credentials");
       console.error("Error:", error);
     }
   };

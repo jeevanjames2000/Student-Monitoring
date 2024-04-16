@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import MenuItem from "@mui/material/MenuItem";
 // material-ui
@@ -32,6 +32,7 @@ import useScriptRef from "hooks/useScriptRef";
 import Google from "assets/images/icons/social-google.svg";
 import AnimateButton from "ui-component/extended/AnimateButton";
 import { strengthColor, strengthIndicator } from "utils/password-strength";
+import { toast } from "react-toastify";
 
 // assets
 import Visibility from "@mui/icons-material/Visibility";
@@ -94,6 +95,7 @@ const FirebaseRegister = ({ ...others }) => {
       [selectedUserType]: !user[selectedUserType],
     });
   };
+  const navigate = useNavigate();
 
   return (
     <>
@@ -130,9 +132,11 @@ const FirebaseRegister = ({ ...others }) => {
 
             let apiUrl = "";
             if (user.student) {
-              apiUrl = "https://student-monitoring-backend.onrender.com/api/students/register";
+              apiUrl =
+                "https://student-monitoring-backend.onrender.com/api/students/register";
             } else if (user.faculty) {
-              apiUrl = "https://student-monitoring-backend.onrender.com/api/faculty/register";
+              apiUrl =
+                "https://student-monitoring-backend.onrender.com/api/faculty/register";
             }
 
             if (apiUrl) {
@@ -145,11 +149,10 @@ const FirebaseRegister = ({ ...others }) => {
               });
 
               const data = await response.json();
-              if (response.status === 200) {
-                alert("success");
+              if (response.status === 200 || 201) {
+                toast.success("Registration Success");
+                navigate("/pages/Login/Login3");
               }
-
-              console.log(data);
 
               if (scriptedRef.current) {
                 setStatus({ success: true });
@@ -165,6 +168,8 @@ const FirebaseRegister = ({ ...others }) => {
               }
             }
           } catch (err) {
+            toast.error("Registration Failed");
+
             console.error(err);
             if (scriptedRef.current) {
               setStatus({ success: false });

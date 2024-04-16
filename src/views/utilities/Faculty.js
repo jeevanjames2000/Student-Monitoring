@@ -26,7 +26,7 @@ import {
 import MainCard from "ui-component/cards/MainCard";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-
+import { toast } from "react-toastify";
 import { Select } from "@mui/material";
 import { MyContext } from "store/useContext";
 // Dummy student data
@@ -83,7 +83,7 @@ const Faculty = () => {
       setModalTitle("Edit Faculty");
       setOpenModal(true);
     } else {
-      alert("Required Access To modify");
+      toast.error("Required Access To modify");
     }
   };
 
@@ -101,22 +101,25 @@ const Faculty = () => {
         }
       )
         .then((response) => {
-          if (response.ok) {
+          if (response === 200) {
+            toast.success("Faculty Deleted Successfully");
             handleGetApi();
-            alert("Faculty deleted successfully");
           }
           if (!response.ok) {
+            toast.error("Error Deleting Faculty");
+
             throw new Error("Network response was not ok");
           }
           return response.json();
         })
 
         .catch((error) => {
+          toast.error("Error Deleting Faculty");
+
           console.error("There was a problem with the fetch operation:", error);
-          alert("There was an error deleting the Faculty");
         });
     } else {
-      alert("Required Access To Delete");
+      toast.error("Required Access To Delete");
     }
   };
 
@@ -127,7 +130,7 @@ const Faculty = () => {
       setFormData(initialStudentData);
       setOpenModal(true);
     } else {
-      alert("Required Access To modify");
+      toast.error("Required Access To modify");
     }
   };
 
@@ -157,11 +160,9 @@ const Faculty = () => {
         body: JSON.stringify(requestBody),
       })
         .then((response) => {
-          if (response.ok) {
-            handleGetApi();
-            handleCloseModal();
-          }
           if (!response.ok) {
+            toast.error("Error Updating");
+
             throw new Error("Network response was not ok");
           }
           return response.json();
@@ -169,8 +170,15 @@ const Faculty = () => {
         .then((response) => {
           // Update the state or any other UI updates as needed
           if (modalTitle === "Add Student") {
+            handleGetApi();
+            handleCloseModal();
+            toast.success("Faculty Inserted Successfully");
+
             setStudents([...students, data]); // Assuming the API returns the new student object
           } else {
+            handleGetApi();
+            handleCloseModal();
+            toast.success("Faculty Updated Successfully");
             const updatedStudents = students.map((s) =>
               s.id === data.id ? data : s
             );
@@ -178,10 +186,12 @@ const Faculty = () => {
           }
         })
         .catch((error) => {
+          toast.error("Error Updating");
+
           console.error("There was a problem with the fetch operation:", error);
         });
     } else {
-      alert("Required Access To modify");
+      toast.error("Required Access To modify");
     }
   };
 

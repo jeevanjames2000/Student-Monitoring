@@ -8,6 +8,8 @@ import Login from "views/pages/authentication/authentication3/Login3";
 import { MyContext } from "store/useContext";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
   const [login, setLogin] = useState(false);
@@ -90,6 +92,7 @@ const App = () => {
           >
             {(!login && <Login setLogin={setLogin} />) || <Routes />}
           </MyContext.Provider>
+          <ToastContainer />
         </NavigationScroll>
       </ThemeProvider>
     </StyledEngineProvider>

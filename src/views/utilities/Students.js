@@ -26,6 +26,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import { Select } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { MyContext } from "store/useContext";
+import { toast } from "react-toastify";
+
 const initialStudentData = {
   id: "",
   name: "",
@@ -46,7 +48,7 @@ const Students = () => {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const { studentData } = useContext(MyContext);
+  const { studentData, setStudentData } = useContext(MyContext);
 
   const handleGetApi = () => {
     fetch(
@@ -59,6 +61,7 @@ const Students = () => {
         return response.json();
       })
       .then((data) => {
+        setStudentData(data);
         setStudents(data);
       })
       .catch((error) => {
@@ -69,7 +72,7 @@ const Students = () => {
 
   useEffect(() => {
     handleGetApi();
-  });
+  }, []);
 
   const handleEdit = (student) => {
     const data = localStorage.getItem("user");
@@ -78,7 +81,7 @@ const Students = () => {
       setModalTitle("Edit Student");
       setOpenModal(true);
     } else {
-      alert("Required Access To modify");
+      toast.error("Required Access To modify");
     }
   };
 
@@ -97,22 +100,24 @@ const Students = () => {
       )
         .then((response) => {
           if (!response.ok) {
+            toast.error("Error Deleting Student");
+
             throw new Error("Network response was not ok");
           }
           return response.json();
         })
         .then((response) => {
           if (response.ok) {
+            toast.success(`${rollNumber} Deleted Successfully`);
             handleGetApi();
-            alert("Student deleted successfully");
           }
         })
         .catch((error) => {
+          toast.success(error);
           console.error("There was a problem with the fetch operation:", error);
-          alert("There was an error deleting the student");
         });
     } else {
-      alert("Required Access To Delete");
+      toast.error("Required Access To Delete");
     }
   };
 
@@ -123,7 +128,7 @@ const Students = () => {
       setFormData(initialStudentData);
       setOpenModal(true);
     } else {
-      alert("Required Access To modify");
+      toast.error("Required Access To modify");
     }
   };
 
@@ -154,21 +159,28 @@ const Students = () => {
       })
         .then((response) => {
           if (!response.ok) {
+            if (modalTitle === "Add Student") {
+              toast.error("Error Inserting Student");
+            }
+            if (modalTitle === "Edit Student") {
+              toast.error("Error Updating Student");
+            }
             handleCloseModal();
             throw new Error("Network response was not ok");
           }
           return response.json();
         })
         .then((response) => {
-          if (response.ok) {
+          if (modalTitle === "Add Student") {
             handleGetApi();
             handleCloseModal();
-          }
+            toast.success("Added Student Successfully");
 
-          // Update the state or any other UI updates as needed
-          if (modalTitle === "Add Student") {
-            setStudents([...students, data]); // Assuming the API returns the new student object
+            setStudents([...students, data]);
           } else {
+            toast.success("Updated Student Sucessfully");
+            handleGetApi();
+            handleCloseModal();
             const updatedStudents = students.map((s) =>
               s.id === data.id ? data : s
             );
@@ -176,10 +188,11 @@ const Students = () => {
           }
         })
         .catch((error) => {
+          toast.error(error);
           console.error("There was a problem with the fetch operation:", error);
         });
     } else {
-      alert("Required Access To modify");
+      toast.error("Required Access To modify");
     }
   };
 
