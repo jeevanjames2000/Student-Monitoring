@@ -51,7 +51,7 @@ const Faculty = () => {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const { facultyData } = useContext(MyContext);
+  const { facultyData, setFacultyData } = useContext(MyContext);
 
   const handleGetApi = () => {
     fetch(
@@ -64,6 +64,7 @@ const Faculty = () => {
         return response.json();
       })
       .then((data) => {
+        setFacultyData(data);
         setStudents(data);
       })
       .catch((error) => {

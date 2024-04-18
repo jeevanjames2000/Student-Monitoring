@@ -22,17 +22,6 @@ const Login = () => {
   const navigate = useNavigate();
   const { setLogin } = useContext(MyContext);
 
-  // State to store login details
-  const [loginDetails, setLoginDetails] = useState({
-    email: "",
-    password: "",
-  });
-  console.log("loginDetails: ", loginDetails);
-
-  const handleRoute = () => {
-    navigate("/pages/Register/Register3");
-  };
-
   return (
     <AuthWrapper1>
       <Grid

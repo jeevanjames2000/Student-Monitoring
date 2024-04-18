@@ -85,16 +85,16 @@ const FirebaseRegister = ({ ...others }) => {
   });
   console.log("loginData: ", loginData);
 
-  const [select, setSelect] = useState("");
-  const handleDropChange = (event) => {
-    const selectedUserType = event.target.value;
-    setSelect(selectedUserType);
+  // const [select, setSelect] = useState("");
+  // const handleDropChange = (event) => {
+  //   const selectedUserType = event.target.value;
+  //   setSelect(selectedUserType);
 
-    setUser({
-      ...user,
-      [selectedUserType]: !user[selectedUserType],
-    });
-  };
+  //   setUser({
+  //     ...user,
+  //     [selectedUserType]: !user[selectedUserType],
+  //   });
+  // };
   const navigate = useNavigate();
 
   return (
@@ -190,7 +190,7 @@ const FirebaseRegister = ({ ...others }) => {
         }) => (
           <form noValidate onSubmit={handleSubmit} {...others}>
             <Grid container spacing={matchDownSM ? 0 : 2}>
-              <Grid item xs={12} sm={12}>
+              {/* <Grid item xs={12} sm={12}>
                 <FormControl fullWidth>
                   <InputLabel id="demo-simple-select-label">
                     User Type
@@ -206,7 +206,7 @@ const FirebaseRegister = ({ ...others }) => {
                     <MenuItem value={"faculty"}>Faculty</MenuItem>
                   </Select>
                 </FormControl>
-              </Grid>
+              </Grid> */}
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth

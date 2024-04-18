@@ -60,12 +60,8 @@ const FirebaseLogin = ({ ...others }) => {
 
   const handleLoginSubmit = async (data) => {
     try {
-      let ApiUrl = "";
-      if (user.student) {
-        ApiUrl = `https://student-monitoring-backend.onrender.com/api/students/login`;
-      } else if (user.faculty) {
-        ApiUrl = `https://student-monitoring-backend.onrender.com/api/faculty/login`;
-      }
+     const ApiUrl = `https://student-monitoring-backend.onrender.com/api/faculty/login`;
+
       const response = await fetch(ApiUrl, {
         method: "POST",
         headers: {
@@ -88,26 +84,13 @@ const FirebaseLogin = ({ ...others }) => {
     }
   };
 
-  const [user, setUser] = useState({ student: false, faculty: false });
-
-  const [select, setSelect] = useState("");
-  const handleDropChange = (event) => {
-    const selectedUserType = event.target.value;
-    setSelect(selectedUserType);
-
-    setUser({
-      student: selectedUserType === "student",
-      faculty: selectedUserType === "faculty",
-    });
-  };
-
   return (
     <>
       <Formik
         initialValues={{
-          email: "jeevanjames",
-          password: "password123",
-          user: "",
+          email: "",
+          password: "",
+
           // submit: null,
         }}
         validationSchema={Yup.object().shape({
@@ -150,7 +133,7 @@ const FirebaseLogin = ({ ...others }) => {
           values,
         }) => (
           <form noValidate onSubmit={handleSubmit} {...others}>
-            <FormControl fullWidth>
+            {/* <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">User Type</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -169,7 +152,7 @@ const FirebaseLogin = ({ ...others }) => {
                 errors.user && ( // changed from `touched.select` to `touched.user`
                   <FormHelperText error>{errors.user}</FormHelperText> // changed from `errors.select` to `errors.user`
                 )}
-            </FormControl>
+            </FormControl> */}
 
             <FormControl
               fullWidth

@@ -66,12 +66,12 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    if (login) {
+    if (login === true) {
       localStorage.setItem("login", "true");
     } else {
       localStorage.removeItem("login");
     }
-  }, [login]);
+  }, []);
 
   const customization = useSelector((state) => state.customization);
 
