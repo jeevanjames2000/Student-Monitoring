@@ -130,14 +130,8 @@ const FirebaseRegister = ({ ...others }) => {
               password: values.password,
             };
 
-            let apiUrl = "";
-            if (user.student) {
-              apiUrl =
-                "https://student-monitoring-backend.onrender.com/api/students/register";
-            } else if (user.faculty) {
-              apiUrl =
-                "https://student-monitoring-backend.onrender.com/api/faculty/register";
-            }
+            let apiUrl =
+              "https://student-monitoring-backend.onrender.com/api/faculty/register";
 
             if (apiUrl) {
               const response = await fetch(apiUrl, {
@@ -148,7 +142,6 @@ const FirebaseRegister = ({ ...others }) => {
                 body: JSON.stringify(loginData),
               });
 
-              const data = await response.json();
               if (response.status === 200 || 201) {
                 toast.success("Registration Success");
                 navigate("/pages/Login/Login3");
@@ -160,17 +153,15 @@ const FirebaseRegister = ({ ...others }) => {
                 console.log(values);
               }
             } else {
-              console.error("User type is not selected");
               if (scriptedRef.current) {
                 setStatus({ success: false });
-                setErrors({ submit: "User type is not selected" });
+
                 setSubmitting(false);
               }
             }
           } catch (err) {
             toast.error("Registration Failed");
 
-            console.error(err);
             if (scriptedRef.current) {
               setStatus({ success: false });
               setErrors({ submit: err.message });

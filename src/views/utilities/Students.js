@@ -234,7 +234,7 @@ const Students = () => {
       title="Students"
       secondary={
         <Button variant="outlined" onClick={handleAdd}>
-          Add Student
+          Add
         </Button>
       }
     >

@@ -234,7 +234,7 @@ const Faculty = () => {
       title="Faculty"
       secondary={
         <Button variant="outlined" onClick={handleAdd}>
-          Add Student
+          Add
         </Button>
       }
     >
