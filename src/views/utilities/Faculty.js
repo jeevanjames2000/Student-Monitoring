@@ -102,7 +102,7 @@ const Faculty = () => {
         }
       )
         .then((response) => {
-          if (response === 200) {
+          if (response === 200 || response.ok) {
             toast.success("Faculty Deleted Successfully");
             handleGetApi();
           }
