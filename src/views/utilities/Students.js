@@ -244,16 +244,17 @@ const Students = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>ID</TableCell>
+                  <TableCell>Sl.No</TableCell>
                   <TableCell>Name</TableCell>
                   <TableCell>Roll Number</TableCell>
                   <TableCell>Branch</TableCell>
                   <TableCell>Year</TableCell>
                   <TableCell align="center">QR-Code</TableCell>
-                  <TableCell>Entry Date</TableCell>
-                  <TableCell>Entry Time</TableCell>
-                  <TableCell>Exit Date</TableCell>
+                  <TableCell>Date</TableCell>
                   <TableCell>Exit Time</TableCell>
+                  {/* <TableCell>Entry Date</TableCell> */}
+                  <TableCell>Entry Time</TableCell>
+                  <TableCell>Total Time</TableCell>
                   <TableCell>Actions</TableCell>
                 </TableRow>
               </TableHead>
@@ -276,17 +277,18 @@ const Students = () => {
                         </Button>
                       </TableCell>
                       <TableCell>
-                        {student.entryTime && student.entryTime.slice(0, 10)}
-                      </TableCell>
-                      <TableCell>
-                        {student.entryTime && student.entryTime.slice(11, 19)}
-                      </TableCell>
-                      <TableCell>
                         {student.exitTime && student.exitTime.slice(0, 10)}
                       </TableCell>
                       <TableCell>
                         {student.exitTime && student.exitTime.slice(11, 19)}
                       </TableCell>
+                      {/* <TableCell>
+                        {student.entryTime && student.entryTime.slice(0, 10)}
+                      </TableCell> */}
+                      <TableCell>
+                        {student.entryTime && student.entryTime.slice(11, 19)}
+                      </TableCell>
+                      <TableCell>{student.totalTime}</TableCell>
 
                       <TableCell>
                         <EditIcon

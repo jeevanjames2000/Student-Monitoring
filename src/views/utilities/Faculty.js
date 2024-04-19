@@ -250,10 +250,11 @@ const Faculty = () => {
                   <TableCell>Branch</TableCell>
                   <TableCell>Designation</TableCell>
                   <TableCell align="center">QR-Code</TableCell>
-                  <TableCell>Entry Date</TableCell>
-                  <TableCell>Entry Time</TableCell>
-                  <TableCell>Exit Date</TableCell>
+                  <TableCell>Date</TableCell>
                   <TableCell>Exit Time</TableCell>
+                  {/* <TableCell>Entry Date</TableCell> */}
+                  <TableCell>Entry Time</TableCell>
+                  <TableCell>Total Time</TableCell>
                   <TableCell>Actions</TableCell>
                 </TableRow>
               </TableHead>
@@ -276,17 +277,15 @@ const Faculty = () => {
                         </Button>
                       </TableCell>
                       <TableCell>
-                        {student.entryTime && student.entryTime.slice(0, 15)}
-                      </TableCell>
-                      <TableCell>
-                        {student.entryTime && student.entryTime.slice(15, 25)}
-                      </TableCell>
-                      <TableCell>
                         {student.exitTime && student.exitTime.slice(0, 15)}
                       </TableCell>
                       <TableCell>
                         {student.exitTime && student.exitTime.slice(15, 25)}
                       </TableCell>
+                      <TableCell>
+                        {student.entryTime && student.entryTime.slice(15, 25)}
+                      </TableCell>
+                      <TableCell>{student.totalTime}</TableCell>
                       <TableCell>
                         <EditIcon
                           style={{ cursor: "pointer" }}
