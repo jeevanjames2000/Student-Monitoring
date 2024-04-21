@@ -14,7 +14,8 @@ import chartData from "./chart-data/bajaj-area-chart";
 
 // ===========================|| DASHBOARD DEFAULT - BAJAJ AREA CHART CARD ||=========================== //
 
-const BajajAreaChartCard = () => {
+const BajajAreaChartCard = ({ data }) => {
+  console.log("data: ", data);
   const theme = useTheme();
   const customization = useSelector((state) => state.customization);
   const { navType } = customization;
@@ -32,6 +33,8 @@ const BajajAreaChartCard = () => {
     ApexCharts.exec(`support-chart`, "updateOptions", newSupportChart);
   }, [navType, orangeDark]);
 
+  const totalCount = data.studentCount + data.facultyCount;
+
   return (
     <Card sx={{ bgcolor: "secondary.light" }}>
       <Grid container sx={{ p: 2, pb: 0, color: "#fff" }}>
@@ -42,12 +45,12 @@ const BajajAreaChartCard = () => {
                 variant="subtitle1"
                 sx={{ color: theme.palette.secondary.dark }}
               >
-                Highest Attendance
+                Attendance
               </Typography>
             </Grid>
             <Grid item>
               <Typography variant="h4" sx={{ color: theme.palette.grey[800] }}>
-                360
+                {totalCount}
               </Typography>
             </Grid>
           </Grid>

@@ -107,10 +107,8 @@ const Students = () => {
           return response.json();
         })
         .then((response) => {
-          if (response.ok) {
-            toast.success(`${rollNumber} Deleted Successfully`);
-            handleGetApi();
-          }
+          toast.success(`${rollNumber} Deleted Successfully`);
+          handleGetApi();
         })
         .catch((error) => {
           toast.success(error);

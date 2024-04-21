@@ -35,7 +35,7 @@ const status = [
 
 // ==============================|| DASHBOARD DEFAULT - TOTAL GROWTH BAR CHART ||============================== //
 
-const TotalGrowthBarChart = ({ isLoading }) => {
+const TotalGrowthBarChart = ({ isLoading, data }) => {
   const [value, setValue] = useState("today");
   const theme = useTheme();
   const customization = useSelector((state) => state.customization);
@@ -50,6 +50,7 @@ const TotalGrowthBarChart = ({ isLoading }) => {
   const primaryDark = theme.palette.primary.dark;
   const secondaryMain = theme.palette.secondary.main;
   const secondaryLight = theme.palette.secondary.light;
+  const totalCount = data.studentCount + data.facultyCount;
 
   useEffect(() => {
     const newChartData = {
@@ -112,6 +113,121 @@ const TotalGrowthBarChart = ({ isLoading }) => {
     grey500,
   ]);
 
+  const getChartData = () => {
+    const studentCount = data.studentCount;
+    const facultyCount = data.facultyCount;
+    const total = studentCount + facultyCount;
+
+    return {
+      height: 480,
+      type: "bar",
+      options: {
+        chart: {
+          id: "bar-chart",
+          stacked: true,
+          toolbar: {
+            show: true,
+          },
+          zoom: {
+            enabled: true,
+          },
+        },
+        responsive: [
+          {
+            breakpoint: 480,
+            options: {
+              legend: {
+                position: "bottom",
+                offsetX: -10,
+                offsetY: 0,
+              },
+            },
+          },
+        ],
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            columnWidth: "50%",
+          },
+        },
+        xaxis: {
+          type: "category",
+          categories: [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+          ],
+          labels: {
+            style: {
+              colors: primary,
+            },
+          },
+        },
+        yaxis: {
+          labels: {
+            style: {
+              colors: primary,
+            },
+          },
+        },
+        legend: {
+          show: true,
+          fontSize: "14px",
+          fontFamily: `'Roboto', sans-serif`,
+          position: "bottom",
+          offsetX: 20,
+          labels: {
+            colors: grey500,
+          },
+          markers: {
+            width: 16,
+            height: 16,
+            radius: 5,
+          },
+          itemMargin: {
+            horizontal: 15,
+            vertical: total,
+          },
+        },
+        fill: {
+          type: "solid",
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        grid: {
+          borderColor: grey200,
+        },
+        tooltip: {
+          theme: "light",
+        },
+      },
+      series: [
+        {
+          name: "Student",
+          data: Array(12).fill(studentCount),
+        },
+        {
+          name: "Faculty",
+          data: Array(12).fill(facultyCount),
+        },
+        {
+          name: "Total",
+          data: Array(12).fill(studentCount + facultyCount),
+        },
+      ],
+    };
+  };
+
   return (
     <>
       {isLoading ? (
@@ -133,7 +249,7 @@ const TotalGrowthBarChart = ({ isLoading }) => {
                       </Typography>
                     </Grid>
                     <Grid item>
-                      <Typography variant="h3">362</Typography>
+                      <Typography variant="h3">{totalCount}</Typography>
                     </Grid>
                   </Grid>
                 </Grid>
@@ -154,7 +270,7 @@ const TotalGrowthBarChart = ({ isLoading }) => {
               </Grid>
             </Grid>
             <Grid item xs={12}>
-              <Chart {...chartData} />
+              <Chart {...getChartData()} />
             </Grid>
           </Grid>
         </MainCard>

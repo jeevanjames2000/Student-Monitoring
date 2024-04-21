@@ -90,7 +90,8 @@ const App = () => {
               setStudentData,
             }}
           >
-            {(!login && <Login setLogin={setLogin} />) || <Routes />}
+            {/* {(!login && <Login setLogin={setLogin} />) || <Routes />} */}
+            <Routes />
           </MyContext.Provider>
           <ToastContainer />
         </NavigationScroll>
