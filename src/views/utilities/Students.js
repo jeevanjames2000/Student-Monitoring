@@ -86,36 +86,43 @@ const Students = () => {
   };
 
   const handleDelete = (rollNumber) => {
-    const data = localStorage.getItem("user");
+    // Open a confirm alert dialog
+    const isConfirmed = window.confirm("Are you sure you want to delete?");
 
-    if (data === "true") {
-      fetch(
-        `https://student-monitoring-backend.onrender.com/api/students/deleteStudentByRollNumber/${rollNumber}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
-        .then((response) => {
-          if (!response.ok) {
-            toast.error("Error Deleting Student");
+    if (isConfirmed) {
+      const data = localStorage.getItem("user");
 
-            throw new Error("Network response was not ok");
+      if (data === "true") {
+        fetch(
+          `https://student-monitoring-backend.onrender.com/api/students/deleteStudentByRollNumber/${rollNumber}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
           }
-          return response.json();
-        })
-        .then((response) => {
-          toast.success(`${rollNumber} Deleted Successfully`);
-          handleGetApi();
-        })
-        .catch((error) => {
-          toast.success(error);
-          console.error("There was a problem with the fetch operation:", error);
-        });
-    } else {
-      toast.error("Required Access To Delete");
+        )
+          .then((response) => {
+            if (!response.ok) {
+              toast.error("Error Deleting Student");
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          })
+          .then((response) => {
+            toast.success(`${rollNumber} Deleted Successfully`);
+            handleGetApi();
+          })
+          .catch((error) => {
+            toast.success(error);
+            console.error(
+              "There was a problem with the fetch operation:",
+              error
+            );
+          });
+      } else {
+        toast.error("Required Access To Delete");
+      }
     }
   };
 

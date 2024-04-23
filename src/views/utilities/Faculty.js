@@ -89,38 +89,45 @@ const Faculty = () => {
   };
 
   const handleDelete = (emplyoeeId) => {
-    const data = localStorage.getItem("user");
+    const isConfirmed = window.confirm("Are you sure you want to delete?");
 
-    if (data === "true") {
-      fetch(
-        `https://student-monitoring-backend.onrender.com/api/faculty/deleteFacultyById/${emplyoeeId}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
-        .then((response) => {
-          if (response === 200 || response.ok) {
-            toast.success("Faculty Deleted Successfully");
-            handleGetApi();
+    if (isConfirmed) {
+      const data = localStorage.getItem("user");
+
+      if (data === "true") {
+        fetch(
+          `https://student-monitoring-backend.onrender.com/api/faculty/deleteFacultyById/${emplyoeeId}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
           }
-          if (!response.ok) {
+        )
+          .then((response) => {
+            if (response === 200 || response.ok) {
+              toast.success("Faculty Deleted Successfully");
+              handleGetApi();
+            }
+            if (!response.ok) {
+              toast.error("Error Deleting Faculty");
+
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          })
+
+          .catch((error) => {
             toast.error("Error Deleting Faculty");
 
-            throw new Error("Network response was not ok");
-          }
-          return response.json();
-        })
-
-        .catch((error) => {
-          toast.error("Error Deleting Faculty");
-
-          console.error("There was a problem with the fetch operation:", error);
-        });
-    } else {
-      toast.error("Required Access To Delete");
+            console.error(
+              "There was a problem with the fetch operation:",
+              error
+            );
+          });
+      } else {
+        toast.error("Required Access To Delete");
+      }
     }
   };
 
